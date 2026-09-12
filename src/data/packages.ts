@@ -54,7 +54,7 @@ export const packages: Pkg[] = [
     route: 'Munnar – Thekkady – Alappuzha',
     places: ['Munnar', 'Thekkady', 'Alappuzha'],
     price: 15000,
-    image: '/images/itenary AMT.png',
+    image: '/images/kerala-nature-backwater-tour.png',
     theme: 'Hills & Nature',
     description:
       'Explore the misty hills of Munnar, discover the wildlife and spice plantations of Thekkady, and experience the peaceful backwaters of Alappuzha.',
