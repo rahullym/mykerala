@@ -1,0 +1,124 @@
+---
+import { stays } from '../data/site';
+---
+
+<section class="section section--sand" id="stays">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="kicker" data-reveal>Stay in Comfort</p>
+      <h2 data-reveal data-reveal-delay="80">Handpicked stays for <span class="italic">your Kerala journey</span></h2>
+      <p data-reveal data-reveal-delay="140">
+        Carefully selected hotels and resorts that complement your Kerala travel experience.
+      </p>
+    </div>
+
+    <div class="grid grid--4">
+      {stays.map((s, i) => (
+        <article class="card stay" data-reveal data-reveal-delay={i * 80}>
+          <div class="card__media">
+            <img src={s.image} alt={s.name} loading="lazy" width="500" height="375" />
+            <span class="tag tag--float">{s.tag}</span>
+          </div>
+          <div class="card__body stay__body">
+            <h3>{s.name}</h3>
+            <p class="stay__place"><span aria-hidden="true">⚲</span> {s.place}</p>
+            <p class="muted stay__blurb">{s.blurb}</p>
+            <button
+              type="button"
+              class="link-arrow stay__btn"
+              data-lightbox
+              data-img={s.image}
+              data-title={s.name}
+              data-place={s.place}
+              data-tag={s.tag}
+              data-desc={s.blurb}
+            >
+              View Details <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div class="lb" data-lb hidden>
+  <div class="lb__scrim" data-lb-close></div>
+  <div class="lb__panel" role="dialog" aria-modal="true" aria-labelledby="lb-title">
+    <button class="lb__close" type="button" aria-label="Close" data-lb-close>✕</button>
+    <img data-lb-img src="" alt="" />
+    <div class="lb__body">
+      <span class="tag" data-lb-tag></span>
+      <h3 id="lb-title" data-lb-title></h3>
+      <p class="lb__place" data-lb-place></p>
+      <p class="muted" data-lb-desc></p>
+      <a href="#contact" class="btn btn--primary btn--block" data-lb-close style="margin-top:1.25rem;">
+        Enquire About This Stay
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .stay__body { display: flex; flex-direction: column; }
+  .stay__place { font-size: 0.78rem; color: var(--gold-600); font-weight: 600; margin-top: 0.4rem; }
+  .stay__blurb { font-size: 0.88rem; margin-top: 0.65rem; }
+  .stay__btn { margin-top: 1.1rem; align-self: flex-start; }
+
+  .lb { position: fixed; inset: 0; z-index: 150; display: grid; place-items: center; padding: 1rem; }
+  .lb__scrim { position: absolute; inset: 0; background: rgba(6, 40, 29, 0.72); backdrop-filter: blur(4px); }
+  .lb__panel {
+    position: relative; z-index: 1; width: min(100%, 520px);
+    max-height: 88svh; overflow-y: auto;
+    background: var(--white); border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    animation: pop 0.35s var(--ease);
+  }
+  @keyframes pop { from { opacity: 0; transform: translateY(20px) scale(0.97); } to { opacity: 1; transform: none; } }
+  .lb__panel img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+  .lb__body { padding: clamp(1.25rem, 4vw, 1.85rem); }
+  .lb__body h3 { margin-top: 0.75rem; }
+  .lb__place { font-size: 0.82rem; color: var(--gold-600); font-weight: 600; margin-top: 0.3rem; margin-bottom: 0.75rem; }
+  .lb__close {
+    position: absolute; top: 0.85rem; right: 0.85rem; z-index: 2;
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92); box-shadow: var(--shadow-sm);
+  }
+</style>
+
+<script>
+  const lb = document.querySelector<HTMLElement>('[data-lb]');
+  const img = lb?.querySelector<HTMLImageElement>('[data-lb-img]');
+  const q = (sel: string) => lb?.querySelector<HTMLElement>(sel);
+  let lastFocus: HTMLElement | null = null;
+
+  const open = (btn: HTMLElement) => {
+    if (!lb || !img) return;
+    lastFocus = btn;
+    img.src = btn.dataset.img ?? '';
+    img.alt = btn.dataset.title ?? '';
+    q('[data-lb-tag]')!.textContent = btn.dataset.tag ?? '';
+    q('[data-lb-title]')!.textContent = btn.dataset.title ?? '';
+    q('[data-lb-place]')!.textContent = btn.dataset.place ?? '';
+    q('[data-lb-desc]')!.textContent = btn.dataset.desc ?? '';
+    lb.hidden = false;
+    document.body.classList.add('nav-open');
+    lb.querySelector<HTMLButtonElement>('.lb__close')?.focus();
+  };
+
+  const close = () => {
+    if (!lb) return;
+    lb.hidden = true;
+    document.body.classList.remove('nav-open');
+    lastFocus?.focus();
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-lightbox]').forEach((btn) =>
+    btn.addEventListener('click', () => open(btn))
+  );
+  lb?.querySelectorAll('[data-lb-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lb && !lb.hidden) close();
+  });
+</script>

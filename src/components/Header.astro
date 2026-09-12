@@ -1,0 +1,190 @@
+---
+import { nav, site } from '../data/site';
+const { pathname } = Astro.url;
+const isActive = (href: string) =>
+  href === '/' ? pathname === '/' : href.startsWith('/') && !href.includes('#') && pathname.startsWith(href);
+---
+
+<header class="hdr" id="site-header" data-header>
+  <div class="hdr__inner wrap">
+    <a href="/" class="brand" aria-label={`${site.name} – home`}>
+      <img
+        src="/images/keralatourist logo.png"
+        alt={`${site.name} – Journeys to Remember`}
+        width="2154"
+        height="480"
+      />
+    </a>
+
+    <nav class="hdr__nav" aria-label="Primary">
+      <ul>
+        {nav.map((item) => (
+          <li>
+            <a href={item.href} class:list={['hdr__link', { 'is-active': isActive(item.href) }]}>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="hdr__actions">
+      <a href={`tel:${site.phoneHref}`} class="hdr__phone" aria-label={`Call ${site.phone}`}>
+        <span aria-hidden="true">☎</span> {site.phone}
+      </a>
+      <a href="/#contact" class="btn btn--gold hdr__cta">Plan Your Trip</a>
+      <button
+        class="burger"
+        type="button"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        data-nav-toggle
+      >
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="nav-scrim" data-nav-scrim hidden></div>
+
+<aside class="drawer" id="mobile-nav" data-nav-panel aria-label="Mobile menu" aria-hidden="true">
+  <div class="drawer__top">
+    <span class="drawer__title">Menu</span>
+    <button class="drawer__close" type="button" aria-label="Close menu" data-nav-close>✕</button>
+  </div>
+  <nav aria-label="Mobile">
+    <ul class="drawer__list">
+      {nav.map((item, i) => (
+        <li style={`--i:${i}`}>
+          <a href={item.href} data-nav-link>
+            <span>{item.label}</span>
+            <span class="drawer__arrow" aria-hidden="true">↗</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+  <div class="drawer__foot">
+    <a href={`tel:${site.phoneHref}`} class="btn btn--ghost btn--block">☎ {site.phone}</a>
+    <a href="/#contact" class="btn btn--primary btn--block" data-nav-link>Plan Your Trip</a>
+    <p class="drawer__meta">{site.email}<br />{site.location}</p>
+  </div>
+</aside>
+
+<style>
+  .hdr {
+    position: fixed; inset: 0 0 auto 0; z-index: 100;
+    color: var(--cream);
+    transition: background 0.35s var(--ease), box-shadow 0.35s var(--ease),
+      transform 0.35s var(--ease), color 0.35s var(--ease);
+  }
+  .hdr.is-stuck { color: var(--ink); }
+  .hdr__inner {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    min-height: var(--header-h);
+  }
+  .hdr.is-stuck { background: rgba(250, 247, 240, 0.92); backdrop-filter: blur(14px); box-shadow: var(--shadow-sm); }
+  .hdr.is-hidden { transform: translateY(-100%); }
+
+  .brand { display: flex; align-items: center; flex-shrink: 0; min-width: 0; }
+  .brand img {
+    width: auto; height: 48px; max-width: min(62vw, 340px); object-fit: contain;
+    background: #fff; border-radius: 12px; padding: 6px 11px;
+    box-shadow: 0 4px 16px rgba(6, 40, 29, 0.22);
+    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  }
+  .brand:hover img {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 22px rgba(6, 40, 29, 0.3);
+  }
+  /* Once the header is stuck on cream, the plate no longer needs to float. */
+  .hdr.is-stuck .brand img { box-shadow: 0 0 0 1px var(--line); }
+
+  @media (min-width: 600px) { .brand img { height: 58px; } }
+  @media (min-width: 900px) { .brand img { height: 68px; max-width: 340px; } }
+
+  .hdr__nav { display: none; }
+  .hdr__nav ul { display: flex; align-items: center; gap: clamp(0.75rem, 2vw, 1.75rem); }
+  .hdr__link {
+    position: relative; font-size: 0.88rem; font-weight: 500; padding: 0.4rem 0;
+    transition: color 0.25s var(--ease);
+  }
+  .hdr__link::after {
+    content: ''; position: absolute; left: 0; bottom: 0; height: 1.5px; width: 0;
+    background: var(--gold-500); transition: width 0.3s var(--ease);
+  }
+  .hdr__link:hover::after, .hdr__link.is-active::after { width: 100%; }
+
+  .hdr__actions { display: flex; align-items: center; gap: 0.75rem; }
+  .hdr__phone { display: none; font-size: 0.82rem; font-weight: 600; white-space: nowrap; }
+  .hdr__cta { display: none; padding: 0.7rem 1.25rem; min-height: 44px; }
+
+  .burger {
+    width: 46px; height: 46px; border-radius: 50%;
+    display: grid; place-content: center; gap: 5px;
+    background: rgba(250, 247, 240, 0.92); border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: var(--shadow-sm);
+  }
+  .hdr.is-stuck .burger { border-color: var(--line); }
+  .burger span {
+    display: block; width: 19px; height: 2px; background: var(--green-900); border-radius: 2px;
+    transition: transform 0.3s var(--ease), opacity 0.2s var(--ease);
+  }
+  .burger[aria-expanded='true'] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .burger[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
+  .burger[aria-expanded='true'] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .nav-scrim {
+    position: fixed; inset: 0; z-index: 110;
+    background: rgba(6, 40, 29, 0.5); backdrop-filter: blur(3px);
+    opacity: 0; transition: opacity 0.35s var(--ease);
+  }
+  .nav-scrim.is-open { opacity: 1; }
+
+  .drawer {
+    position: fixed; top: 0; right: 0; bottom: 0; z-index: 120;
+    width: min(88vw, 380px);
+    background: var(--green-900); color: var(--cream);
+    display: flex; flex-direction: column;
+    padding: 1.25rem 1.5rem calc(1.5rem + env(safe-area-inset-bottom));
+    transform: translateX(100%); transition: transform 0.42s var(--ease);
+    overflow-y: auto; overscroll-behavior: contain;
+  }
+  .drawer.is-open { transform: none; }
+
+  .drawer__top { display: flex; align-items: center; justify-content: space-between; padding-bottom: 1.25rem; }
+  .drawer__title { font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold-400); }
+  .drawer__close {
+    width: 40px; height: 40px; border-radius: 50%; font-size: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.25); color: var(--cream);
+  }
+
+  .drawer__list { border-top: 1px solid rgba(255, 255, 255, 0.12); }
+  .drawer__list li { border-bottom: 1px solid rgba(255, 255, 255, 0.12); }
+  .drawer__list a {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.05rem 0; font-family: var(--serif); font-size: 1.45rem;
+    transition: color 0.25s var(--ease), padding-left 0.3s var(--ease);
+  }
+  .drawer__list a:hover { color: var(--gold-400); padding-left: 0.5rem; }
+  .drawer__arrow { font-size: 0.9rem; opacity: 0.45; }
+  .drawer.is-open .drawer__list li {
+    animation: slideIn 0.5s var(--ease) both;
+    animation-delay: calc(0.07s * var(--i) + 0.1s);
+  }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+
+  .drawer__foot { margin-top: auto; padding-top: 1.75rem; display: grid; gap: 0.7rem; }
+  .drawer__foot .btn--ghost { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.25); color: var(--cream); }
+  .drawer__foot .btn--primary { background: var(--gold-500); color: var(--green-900); }
+  .drawer__meta { font-size: 0.8rem; color: rgba(250, 247, 240, 0.6); text-align: center; margin-top: 0.5rem; }
+
+  @media (min-width: 900px) {
+    .hdr__nav { display: block; }
+    .hdr__cta { display: inline-flex; }
+    .burger { display: none; }
+  }
+  @media (min-width: 1100px) { .hdr__phone { display: inline-flex; gap: 0.35rem; } }
+</style>

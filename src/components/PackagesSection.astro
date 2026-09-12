@@ -1,0 +1,25 @@
+---
+import { packages } from '../data/packages';
+import PackageCard from './PackageCard.astro';
+const featured = packages.slice(0, 3);
+---
+
+<section class="section section--sand" id="packages">
+  <div class="wrap">
+    <div class="section-head section-head--center">
+      <p class="kicker" data-reveal>Choose your way to experience Kerala</p>
+      <h2 data-reveal data-reveal-delay="80">Thoughtfully crafted <span class="italic">Kerala journeys</span></h2>
+      <p data-reveal data-reveal-delay="140">
+        For families, couples and unforgettable escapes — every itinerary planned for comfort and value.
+      </p>
+    </div>
+
+    <div class="grid grid--3">
+      {featured.map((pkg, i) => <PackageCard pkg={pkg} delay={i * 90} />)}
+    </div>
+
+    <div class="center" style="margin-top: clamp(2rem, 4vw, 3rem);" data-reveal>
+      <a href="/packages" class="btn btn--primary">View All Kerala Packages <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</section>

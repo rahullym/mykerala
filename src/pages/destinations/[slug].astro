@@ -1,0 +1,128 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import PackageCard from '../../components/PackageCard.astro';
+import Contact from '../../components/Contact.astro';
+import { destinations, site } from '../../data/site';
+import { packages } from '../../data/packages';
+
+export function getStaticPaths() {
+  return destinations.map((dest) => ({ params: { slug: dest.slug }, props: { dest } }));
+}
+
+const { dest } = Astro.props;
+// The same place appears under different names across itineraries
+// (Alleppey/Alappuzha, Kochi/Cochin), so match on an alias group.
+const aliases: Record<string, string[]> = {
+  alleppey: ['alleppey', 'alappuzha'],
+  kochi: ['kochi', 'cochin', 'fort kochi'],
+  munnar: ['munnar'],
+  wayanad: ['wayanad'],
+  kovalam: ['kovalam'],
+};
+const names = aliases[dest.slug] ?? [dest.name.toLowerCase()];
+const related = packages.filter((p) =>
+  p.places.some((pl) => names.includes(pl.toLowerCase()))
+);
+const others = destinations.filter((d) => d.slug !== dest.slug);
+---
+
+<Base
+  title={`${dest.name}, Kerala | ${site.name}`}
+  description={dest.blurb}
+>
+  <PageHero
+    kicker={dest.region}
+    title={dest.name}
+    lede={dest.blurb}
+    image={dest.image}
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Destinations', href: '/#destinations' }, { label: dest.name }]}
+  />
+
+  <section class="section">
+    <div class="wrap dest-grid">
+      <div>
+        <p class="kicker" data-reveal>What to see</p>
+        <h2 data-reveal data-reveal-delay="80">Highlights of <span class="italic">{dest.name}</span></h2>
+        <ul class="hlist">
+          {dest.highlights.map((h, i) => (
+            <li data-reveal data-reveal-delay={i * 70}>
+              <span class="hlist__num">{String(i + 1).padStart(2, '0')}</span>
+              <span>{h}</span>
+            </li>
+          ))}
+        </ul>
+        <a href="/#contact" class="btn btn--primary" data-reveal style="margin-top:2rem;">
+          Plan a trip to {dest.name} <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <figure class="dest-figure" data-reveal data-reveal-delay="120">
+        <img src={dest.image} alt={dest.name} width="800" height="1000" loading="lazy" />
+        <figcaption>{dest.name} · {dest.region}</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  {related.length > 0 && (
+    <section class="section section--sand">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="kicker" data-reveal>Tours that include {dest.name}</p>
+          <h2 data-reveal data-reveal-delay="80">Packages featuring <span class="italic">{dest.name}</span></h2>
+        </div>
+        <div class="grid grid--3">
+          {related.map((p, i) => <PackageCard pkg={p} delay={i * 80} />)}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="section section--tight">
+    <div class="wrap">
+      <p class="kicker" data-reveal>Keep exploring</p>
+      <h2 data-reveal data-reveal-delay="80" style="margin-bottom:1.75rem;">Other <span class="italic">destinations</span></h2>
+      <div class="grid grid--3">
+        {others.map((d, i) => (
+          <a href={`/destinations/${d.slug}`} class="card mini" data-reveal data-reveal-delay={i * 70}>
+            <div class="card__media mini__media">
+              <img src={d.image} alt={d.name} loading="lazy" width="400" height="300" />
+            </div>
+            <div class="mini__body">
+              <h3>{d.name}</h3>
+              <small class="muted">{d.region}</small>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <Contact />
+</Base>
+
+<style>
+  .dest-grid { display: grid; gap: clamp(2rem, 5vw, 3.5rem); align-items: center; }
+  .hlist { display: grid; gap: 0.75rem; margin-top: 1.75rem; }
+  .hlist li {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 0.9rem 1.1rem; background: var(--white);
+    border: 1px solid var(--line); border-radius: var(--radius-sm);
+    font-size: 0.95rem; transition: transform 0.25s var(--ease), border-color 0.25s var(--ease);
+  }
+  .hlist li:hover { transform: translateX(5px); border-color: var(--green-600); }
+  .hlist__num { font-family: var(--serif); color: var(--gold-500); font-size: 1.1rem; }
+
+  .dest-figure { margin: 0; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow); }
+  .dest-figure img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+  .dest-figure figcaption {
+    padding: 0.85rem 1.1rem; background: var(--green-900); color: var(--cream);
+    font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+  }
+
+  .mini { display: flex; align-items: center; gap: 1rem; padding: 0.6rem; }
+  .mini__media { width: 88px; height: 88px; flex: 0 0 auto; border-radius: 12px; aspect-ratio: 1; }
+  .mini__body h3 { font-size: 1.1rem; }
+
+  @media (min-width: 900px) { .dest-grid { grid-template-columns: 1fr 0.85fr; } }
+</style>

@@ -1,0 +1,104 @@
+---
+import { faqs } from '../data/site';
+---
+
+<section class="section faq" id="faq">
+  <div class="wrap faq__grid">
+    <div class="faq__intro">
+      <p class="kicker" data-reveal>Frequently Asked Questions</p>
+      <h2 data-reveal data-reveal-delay="80">Planning your <span class="italic">Kerala trip?</span></h2>
+      <p class="muted" data-reveal data-reveal-delay="140">
+        A few things travellers usually ask before booking. Anything else — just send us a message.
+      </p>
+      <a href="#contact" class="btn btn--ghost" data-reveal data-reveal-delay="180" style="margin-top:1.5rem;">
+        Ask a Question
+      </a>
+    </div>
+
+    <div class="faq__list" data-reveal data-reveal-delay="120">
+      {faqs.map((f, i) => (
+        <div class="faq__item">
+          <h3>
+            <button
+              type="button"
+              class="faq__q"
+              aria-expanded={i === 0 ? 'true' : 'false'}
+              aria-controls={`faq-a-${i}`}
+              id={`faq-q-${i}`}
+              data-faq-btn
+            >
+              <span>{f.q}</span>
+              <span class="faq__icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div
+            class="faq__a"
+            id={`faq-a-${i}`}
+            role="region"
+            aria-labelledby={`faq-q-${i}`}
+            hidden={i !== 0}
+          >
+            <p>{f.a}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq__grid { display: grid; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+  .faq__intro h2 { margin-top: 0.85rem; }
+  .faq__intro p { margin-top: 1rem; }
+
+  .faq__item { border-bottom: 1px solid var(--line); }
+  .faq__item:first-child { border-top: 1px solid var(--line); }
+  .faq__q {
+    width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: clamp(1.1rem, 2.5vw, 1.4rem) 0; text-align: left;
+    font-family: var(--serif); font-size: clamp(1.02rem, 2.4vw, 1.25rem); font-weight: 600;
+    transition: color 0.25s var(--ease);
+  }
+  .faq__q:hover { color: var(--green-600); }
+  .faq__icon {
+    position: relative; flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid var(--line); transition: background 0.3s var(--ease), border-color 0.3s var(--ease);
+  }
+  .faq__icon::before, .faq__icon::after {
+    content: ''; position: absolute; inset: 50% auto auto 50%;
+    width: 12px; height: 1.5px; background: var(--ink); transform: translate(-50%, -50%);
+    transition: transform 0.3s var(--ease), background 0.3s var(--ease);
+  }
+  .faq__icon::after { transform: translate(-50%, -50%) rotate(90deg); }
+  .faq__q[aria-expanded='true'] .faq__icon { background: var(--green-700); border-color: var(--green-700); }
+  .faq__q[aria-expanded='true'] .faq__icon::before,
+  .faq__q[aria-expanded='true'] .faq__icon::after { background: var(--cream); }
+  .faq__q[aria-expanded='true'] .faq__icon::after { transform: translate(-50%, -50%) rotate(0deg); }
+
+  .faq__a { overflow: hidden; }
+  .faq__a p { padding-bottom: 1.4rem; color: var(--ink-soft); font-size: 0.95rem; max-width: 62ch; }
+  .faq__a:not([hidden]) { animation: expand 0.4s var(--ease); }
+  @keyframes expand { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+
+  @media (min-width: 960px) { .faq__grid { grid-template-columns: 0.85fr 1.15fr; } }
+</style>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-faq-btn]');
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      // Accordion: only one answer open at a time.
+      buttons.forEach((b) => {
+        const panel = document.getElementById(b.getAttribute('aria-controls')!);
+        b.setAttribute('aria-expanded', 'false');
+        if (panel) panel.hidden = true;
+      });
+      if (!isOpen) {
+        btn.setAttribute('aria-expanded', 'true');
+        const panel = document.getElementById(btn.getAttribute('aria-controls')!);
+        if (panel) panel.hidden = false;
+      }
+    });
+  });
+</script>

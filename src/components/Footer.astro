@@ -1,0 +1,109 @@
+---
+import { site, nav, marqueePlaces } from '../data/site';
+import { packages } from '../data/packages';
+const year = new Date().getFullYear();
+---
+
+<footer class="ftr">
+  <div class="wrap ftr__grid">
+    <div class="ftr__brand">
+      <a href="/" class="ftr__logo">
+        <img
+          src="/images/keralatourist logo.png"
+          alt={`${site.name} – Journeys to Remember`}
+          width="2154"
+          height="480"
+          loading="lazy"
+        />
+      </a>
+      <p class="ftr__tag">{site.tagline}.</p>
+      <p class="ftr__blurb">{site.description}</p>
+      <div class="ftr__socials">
+        {['Instagram', 'Facebook', 'WhatsApp', 'YouTube'].map((s) => (
+          <a href="#contact" aria-label={s} class="ftr__social">{s[0]}</a>
+        ))}
+      </div>
+    </div>
+
+    <div class="ftr__col">
+      <h3>Explore</h3>
+      <ul>{nav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}</ul>
+    </div>
+
+    <div class="ftr__col">
+      <h3>Packages</h3>
+      <ul>
+        {packages.map((p) => <li><a href={`/packages/${p.slug}`}>{p.name}</a></li>)}
+      </ul>
+    </div>
+
+    <div class="ftr__col">
+      <h3>Get in touch</h3>
+      <ul class="ftr__contact">
+        <li><a href={`tel:${site.phoneHref}`}><span aria-hidden="true">☎</span> {site.phone}</a></li>
+        <li><a href={`mailto:${site.email}`}><span aria-hidden="true">✉</span> {site.email}</a></li>
+        <li><span aria-hidden="true">⚲</span> {site.location}</li>
+      </ul>
+      <p class="ftr__owners">Operated by {site.owners.join(' & ')}</p>
+    </div>
+  </div>
+
+  <div class="wrap ftr__places">
+    {marqueePlaces.map((p) => <span>{p}</span>)}
+  </div>
+
+  <div class="wrap ftr__bottom">
+    <p>© {year} {site.name}. {site.years} years of South India travel.</p>
+    <p>Personalised Service · Reliable Planning · Genuine Hospitality</p>
+  </div>
+</footer>
+
+<style>
+  .ftr { background: var(--green-900); color: rgba(250, 247, 240, 0.82); padding-top: clamp(3rem, 7vw, 5rem); }
+  .ftr__grid {
+    display: grid; gap: clamp(2rem, 4vw, 3rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  }
+  .ftr__brand { max-width: 340px; }
+  .ftr__logo img {
+    width: 100%; max-width: 300px; height: auto; object-fit: contain;
+    background: #fff; border-radius: 12px; padding: 0.6rem 0.8rem;
+  }
+  .ftr__tag { font-family: var(--serif); font-size: 1.4rem; color: var(--cream); margin-top: 1rem; }
+  .ftr__blurb { font-size: 0.88rem; margin-top: 0.65rem; line-height: 1.7; }
+  .ftr__socials { display: flex; gap: 0.6rem; margin-top: 1.25rem; }
+  .ftr__social {
+    width: 40px; height: 40px; border-radius: 50%; display: grid; place-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.22); font-size: 0.85rem; font-weight: 600;
+    transition: background 0.25s var(--ease), color 0.25s var(--ease), transform 0.25s var(--ease);
+  }
+  .ftr__social:hover { background: var(--gold-500); color: var(--green-900); transform: translateY(-3px); }
+
+  .ftr__col h3 {
+    font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold-400); margin-bottom: 1rem; font-weight: 600;
+  }
+  .ftr__col ul { display: grid; gap: 0.65rem; }
+  .ftr__col a, .ftr__contact li { font-size: 0.9rem; transition: color 0.25s var(--ease); }
+  .ftr__col a:hover { color: var(--gold-400); }
+  .ftr__contact li { display: flex; gap: 0.55rem; align-items: center; }
+  .ftr__owners { font-size: 0.82rem; margin-top: 1.1rem; color: rgba(250, 247, 240, 0.55); }
+
+  .ftr__places {
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+    margin-top: clamp(2.5rem, 5vw, 3.5rem); padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .ftr__places span {
+    font-size: 0.74rem; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.35rem 0.8rem; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 999px;
+  }
+
+  .ftr__bottom {
+    display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; justify-content: space-between;
+    margin-top: 2rem; padding-block: 1.5rem calc(1.5rem + env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.78rem; color: rgba(250, 247, 240, 0.55);
+  }
+  @media (max-width: 640px) { .ftr__bottom { justify-content: center; text-align: center; } }
+</style>

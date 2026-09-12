@@ -1,0 +1,119 @@
+---
+import { destinations } from '../data/site';
+const regions = ['All', ...Array.from(new Set(destinations.map((d) => d.region)))];
+---
+
+<section class="section" id="destinations">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="kicker" data-reveal>Explore Kerala</p>
+      <h2 data-reveal data-reveal-delay="80">Places that belong <span class="italic">on your itinerary</span></h2>
+      <p data-reveal data-reveal-delay="140">
+        Discover some of the most-loved destinations across God's Own Country.
+      </p>
+    </div>
+
+    <div class="filters scroll-x" role="tablist" aria-label="Filter destinations" data-reveal>
+      {regions.map((r, i) => (
+        <button
+          type="button"
+          role="tab"
+          class:list={['filter', { 'is-active': i === 0 }]}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          data-dest-filter={r}
+        >
+          {r}
+        </button>
+      ))}
+    </div>
+
+    <div class="grid grid--4 dest-grid" data-dest-grid>
+      {destinations.map((d, i) => (
+        <article class="card dest" data-region={d.region} data-reveal data-reveal-delay={i * 80}>
+          <a href={`/destinations/${d.slug}`} class="dest__link">
+            <div class="card__media dest__media">
+              <img src={d.image} alt={d.name} loading="lazy" width="500" height="600" />
+              <div class="dest__veil"></div>
+              <span class="dest__region">{d.region}</span>
+              <div class="dest__text">
+                <h3>{d.name}</h3>
+                <p>{d.blurb}</p>
+                <span class="dest__cta">Discover {d.name} <i aria-hidden="true">→</i></span>
+              </div>
+            </div>
+          </a>
+        </article>
+      ))}
+    </div>
+    <p class="dest-empty" data-dest-empty hidden>No destinations in this category yet.</p>
+  </div>
+</section>
+
+<style>
+  .filters { display: flex; gap: 0.5rem; padding-bottom: 0.5rem; margin-bottom: 1.75rem; }
+  .filter {
+    flex: 0 0 auto; padding: 0.6rem 1.15rem; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--white);
+    font-size: 0.83rem; font-weight: 600; color: var(--ink-soft); min-height: 42px;
+    transition: background 0.25s var(--ease), color 0.25s var(--ease), border-color 0.25s var(--ease);
+  }
+  .filter:hover { border-color: var(--green-600); color: var(--green-700); }
+  .filter.is-active { background: var(--green-700); color: var(--cream); border-color: var(--green-700); }
+
+  .dest { border: 0; background: transparent; box-shadow: none; }
+  .dest__media { aspect-ratio: 3 / 4; border-radius: var(--radius); }
+  .dest__veil {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(6,40,29,0) 35%, rgba(6,40,29,0.86) 100%);
+  }
+  .dest__region {
+    position: absolute; top: 0.85rem; left: 0.85rem; z-index: 2;
+    font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700;
+    color: var(--green-900); background: var(--gold-500);
+    padding: 0.28rem 0.65rem; border-radius: 999px;
+  }
+  .dest__text { position: absolute; inset: auto 0 0 0; z-index: 2; padding: 1.2rem; color: var(--cream); }
+  .dest__text h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
+  .dest__text p {
+    font-size: 0.83rem; color: rgba(250, 247, 240, 0.82); margin-top: 0.35rem;
+    max-height: 0; opacity: 0; overflow: hidden;
+    transition: max-height 0.45s var(--ease), opacity 0.35s var(--ease);
+  }
+  .dest__cta {
+    display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 0.7rem;
+    font-size: 0.78rem; font-weight: 600; color: var(--gold-400);
+  }
+  .dest__cta i { transition: transform 0.25s var(--ease); }
+  .dest:hover .dest__text p, .dest:focus-within .dest__text p { max-height: 5rem; opacity: 1; }
+  .dest:hover .dest__cta i { transform: translateX(4px); }
+  .dest.is-hidden { display: none; }
+  .dest-empty { text-align: center; color: var(--ink-soft); padding: 2rem 0; }
+
+  @media (hover: none) {
+    .dest__text p { max-height: 5rem; opacity: 1; }
+  }
+</style>
+
+<script>
+  const filters = document.querySelectorAll<HTMLButtonElement>('[data-dest-filter]');
+  const cards = document.querySelectorAll<HTMLElement>('[data-dest-grid] .dest');
+  const empty = document.querySelector<HTMLElement>('[data-dest-empty]');
+
+  filters.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const region = btn.dataset.destFilter!;
+      filters.forEach((b) => {
+        const on = b === btn;
+        b.classList.toggle('is-active', on);
+        b.setAttribute('aria-selected', String(on));
+      });
+      let shown = 0;
+      cards.forEach((card) => {
+        const match = region === 'All' || card.dataset.region === region;
+        card.classList.toggle('is-hidden', !match);
+        if (match) shown++;
+      });
+      if (empty) empty.hidden = shown > 0;
+    });
+  });
+</script>

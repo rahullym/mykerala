@@ -1,0 +1,142 @@
+---
+import { testimonials } from '../data/site';
+---
+
+<section class="section section--sand tst">
+  <div class="wrap">
+    <div class="section-head section-head--center">
+      <p class="kicker" data-reveal>Traveller Stories</p>
+      <h2 data-reveal data-reveal-delay="80">Stories from <span class="italic">the road</span></h2>
+      <p data-reveal data-reveal-delay="140">Real experiences from travellers who explored Kerala with us.</p>
+    </div>
+
+    <div class="tst__viewport" data-tst-viewport>
+      <div class="tst__track" data-tst-track>
+        {testimonials.map((t, i) => (
+          <figure class="tst__card" data-tst-slide aria-hidden={i === 0 ? 'false' : 'true'}>
+            <div class="tst__stars" aria-label={`${t.rating} out of 5`}>
+              {Array.from({ length: 5 }).map(() => <span aria-hidden="true">★</span>)}
+              <b>{t.rating.toFixed(1)}</b>
+            </div>
+            <blockquote>{t.quote}</blockquote>
+            <figcaption>
+              <span class="tst__avatar" aria-hidden="true">{t.name[0]}</span>
+              <span>
+                <strong>{t.name}</strong>
+                <small>{t.city}</small>
+              </span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+
+    <div class="tst__nav">
+      <button type="button" class="tst__arrow" data-tst-prev aria-label="Previous review">‹</button>
+      <div class="tst__dots">
+        {testimonials.map((t, i) => (
+          <button
+            type="button"
+            class:list={['tst__dot', { 'is-active': i === 0 }]}
+            aria-label={`Review from ${t.name}`}
+            data-tst-dot={i}
+          ></button>
+        ))}
+      </div>
+      <button type="button" class="tst__arrow" data-tst-next aria-label="Next review">›</button>
+    </div>
+
+    <p class="tst__thanks" data-reveal>
+      <span aria-hidden="true">◇</span> Thank you to all our amazing travellers for being a part of our journey.
+    </p>
+  </div>
+</section>
+
+<style>
+  .tst__viewport { overflow: hidden; }
+  .tst__track { display: flex; gap: 0; transition: transform 0.6s var(--ease); }
+  .tst__card {
+    flex: 0 0 100%; padding: clamp(1.5rem, 4vw, 2.5rem);
+    background: var(--white); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);
+    display: flex; flex-direction: column; min-height: 260px;
+  }
+  .tst__stars { display: flex; align-items: center; gap: 0.15rem; color: var(--gold-500); font-size: 0.95rem; }
+  .tst__stars b { margin-left: 0.5rem; font-size: 0.78rem; color: var(--ink-soft); }
+  .tst__card blockquote {
+    font-family: var(--serif); font-size: clamp(1.15rem, 3vw, 1.6rem);
+    line-height: 1.4; margin-top: 1.1rem; flex: 1;
+  }
+  .tst__card figcaption { display: flex; align-items: center; gap: 0.8rem; margin-top: 1.75rem; }
+  .tst__avatar {
+    width: 44px; height: 44px; border-radius: 50%; display: grid; place-content: center;
+    background: var(--green-700); color: var(--cream); font-weight: 600;
+  }
+  .tst__card figcaption strong { display: block; font-size: 0.94rem; }
+  .tst__card figcaption small { color: var(--ink-soft); font-size: 0.8rem; }
+
+  .tst__nav { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 1.5rem; }
+  .tst__arrow {
+    width: 44px; height: 44px; border-radius: 50%; font-size: 1.35rem; line-height: 1;
+    border: 1px solid var(--line); background: var(--white);
+    transition: background 0.25s var(--ease), color 0.25s var(--ease);
+  }
+  .tst__arrow:hover { background: var(--green-700); color: var(--cream); }
+  .tst__dots { display: flex; gap: 0.45rem; }
+  .tst__dot {
+    width: 9px; height: 9px; border-radius: 50%; background: rgba(10, 58, 42, 0.22);
+    transition: width 0.3s var(--ease), background 0.3s var(--ease);
+  }
+  .tst__dot.is-active { width: 26px; border-radius: 999px; background: var(--green-700); }
+  .tst__thanks { text-align: center; margin-top: 2.25rem; color: var(--ink-soft); font-size: 0.92rem; }
+
+  @media (min-width: 900px) {
+    .tst__track { gap: 1.5rem; }
+    .tst__card { flex-basis: calc((100% - 3rem) / 3); }
+    .tst__nav { display: none; }
+  }
+</style>
+
+<script>
+  const track = document.querySelector<HTMLElement>('[data-tst-track]');
+  const slides = Array.from(document.querySelectorAll<HTMLElement>('[data-tst-slide]'));
+  const dots = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-tst-dot]'));
+  const viewport = document.querySelector<HTMLElement>('[data-tst-viewport]');
+  const mq = window.matchMedia('(min-width: 900px)');
+  let index = 0;
+  let timer: number | undefined;
+
+  const render = () => {
+    if (!track) return;
+    // On desktop all three cards are visible, so the carousel stands down.
+    track.style.transform = mq.matches ? 'none' : `translateX(-${index * 100}%)`;
+    slides.forEach((s, i) => s.setAttribute('aria-hidden', String(!mq.matches && i !== index)));
+    dots.forEach((d, i) => d.classList.toggle('is-active', i === index));
+  };
+
+  const go = (next: number) => { index = (next + slides.length) % slides.length; render(); };
+
+  const play = () => {
+    stop();
+    if (!mq.matches) timer = window.setInterval(() => go(index + 1), 6000);
+  };
+  const stop = () => { if (timer) window.clearInterval(timer); };
+
+  document.querySelector('[data-tst-next]')?.addEventListener('click', () => { go(index + 1); play(); });
+  document.querySelector('[data-tst-prev]')?.addEventListener('click', () => { go(index - 1); play(); });
+  dots.forEach((d, i) => d.addEventListener('click', () => { go(i); play(); }));
+
+  let startX = 0;
+  viewport?.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; stop(); }, { passive: true });
+  viewport?.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 45) go(index + (dx < 0 ? 1 : -1));
+    play();
+  });
+
+  mq.addEventListener('change', () => { index = 0; render(); play(); });
+  document.addEventListener('visibilitychange', () => (document.hidden ? stop() : play()));
+
+  render();
+  play();
+</script>

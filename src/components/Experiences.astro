@@ -1,0 +1,206 @@
+---
+// Experience cards built from the four experiences the site highlights:
+// backwaters, tea gardens, local food and beaches.
+const experiences = [
+  {
+    title: 'Kerala Backwater Experience',
+    body: "Cruise through Kerala's peaceful backwaters and experience the natural beauty and traditional charm of God's Own Country.",
+    image: '/images/allapey.jpg',
+    place: 'Alleppey & Kumarakom',
+  },
+  {
+    title: 'Tea Garden Trails',
+    body: 'Walk through the lush tea gardens of Munnar, visit the Tea Museum and take in viewpoints wrapped in mountain mist.',
+    image: '/images/munnar.jpg',
+    place: 'Munnar',
+  },
+  {
+    title: 'Spice & Wildlife Trails',
+    body: 'Explore spice plantations, Periyar Lake and the forests, waterfalls and wildlife of Kerala’s green interior.',
+    image: '/images/wayanad.jpg',
+    place: 'Thekkady & Wayanad',
+  },
+  {
+    title: 'Coast & Sunset Evenings',
+    body: "Unwind along Kerala's coastline with beach evenings, sea breeze and unforgettable sunsets.",
+    image: '/images/kovalam.jpg',
+    place: 'Kovalam & Varkala',
+  },
+];
+---
+
+<section class="section section--dark exp" id="experiences">
+  <div class="wrap">
+    <div class="exp__head">
+      <div class="section-head" style="margin-bottom:0;">
+        <p class="kicker" data-reveal>Experience the real Kerala</p>
+        <h2 data-reveal data-reveal-delay="80">Experience <span class="italic exp__italic">Kerala Differently</span></h2>
+        <p data-reveal data-reveal-delay="140">
+          Discover the beauty of Kerala through peaceful backwaters, lush tea gardens, authentic local food
+          and unforgettable beach experiences.
+        </p>
+      </div>
+
+      <div class="exp__controls" data-reveal>
+        <div class="exp__tabs" role="tablist" aria-label="Experience view">
+          <button type="button" role="tab" class="exp__tab is-active" aria-selected="true" data-exp-tab="attractions">Attractions</button>
+          <button type="button" role="tab" class="exp__tab" aria-selected="false" data-exp-tab="booking">Booking</button>
+        </div>
+        <div class="exp__arrows">
+          <button type="button" class="exp__arrow" data-exp-prev aria-label="Previous experience">‹</button>
+          <button type="button" class="exp__arrow" data-exp-next aria-label="Next experience">›</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="exp__viewport" data-exp-viewport>
+      <div class="exp__track" data-exp-track>
+        {experiences.map((e, i) => (
+          <article class="exp__slide" data-exp-slide aria-hidden={i === 0 ? 'false' : 'true'}>
+            <div class="exp__img">
+              <img src={e.image} alt={e.title} loading="lazy" width="800" height="600" />
+            </div>
+            <div class="exp__copy">
+              <span class="exp__place">{e.place}</span>
+              <h3>{e.title}</h3>
+              <p>{e.body}</p>
+              <div class="exp__actions stack" data-exp-actions>
+                <a href="#contact" class="btn btn--gold exp__book">Book Now</a>
+                <a href="/packages" class="btn btn--light exp__details">View Details</a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+
+    <div class="exp__dots" role="tablist" aria-label="Choose experience">
+      {experiences.map((e, i) => (
+        <button
+          type="button"
+          role="tab"
+          class:list={['exp__dot', { 'is-active': i === 0 }]}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          aria-label={e.title}
+          data-exp-dot={i}
+        ></button>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .exp__italic { color: var(--gold-400); }
+  .exp__head {
+    display: flex; flex-wrap: wrap; gap: 1.5rem;
+    align-items: flex-end; justify-content: space-between;
+    margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
+  }
+  .exp__controls { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .exp__tabs { display: flex; gap: 0.35rem; padding: 0.3rem; border-radius: 999px; background: rgba(255,255,255,0.08); }
+  .exp__tab {
+    padding: 0.55rem 1.1rem; border-radius: 999px; font-size: 0.82rem; font-weight: 600;
+    color: rgba(250, 247, 240, 0.7); min-height: 40px;
+    transition: background 0.25s var(--ease), color 0.25s var(--ease);
+  }
+  .exp__tab.is-active { background: var(--gold-500); color: var(--green-900); }
+  .exp__arrows { display: flex; gap: 0.5rem; }
+  .exp__arrow {
+    width: 46px; height: 46px; border-radius: 50%; font-size: 1.4rem; line-height: 1;
+    color: var(--cream); border: 1px solid rgba(255, 255, 255, 0.28);
+    transition: background 0.25s var(--ease), color 0.25s var(--ease);
+  }
+  .exp__arrow:hover { background: var(--cream); color: var(--green-900); }
+
+  .exp__viewport { overflow: hidden; border-radius: var(--radius-lg); }
+  .exp__track { display: flex; transition: transform 0.6s var(--ease); }
+  .exp__slide {
+    flex: 0 0 100%; display: grid; gap: 0;
+    background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg); overflow: hidden;
+  }
+  .exp__img { aspect-ratio: 16 / 10; overflow: hidden; }
+  .exp__img img { width: 100%; height: 100%; object-fit: cover; }
+  .exp__copy { padding: clamp(1.5rem, 4vw, 2.75rem); display: flex; flex-direction: column; justify-content: center; }
+  .exp__place {
+    font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--gold-400); font-weight: 600;
+  }
+  .exp__copy h3 { margin-top: 0.75rem; font-size: clamp(1.4rem, 3.5vw, 2.1rem); }
+  .exp__copy p { margin-top: 0.85rem; color: rgba(250, 247, 240, 0.78); font-size: 0.95rem; }
+  .exp__actions { margin-top: 1.75rem; }
+  .exp[data-mode='booking'] .exp__details { display: none; }
+  .exp[data-mode='booking'] .exp__book { flex: 1; }
+
+  .exp__dots { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.5rem; }
+  .exp__dot {
+    width: 9px; height: 9px; border-radius: 50%; background: rgba(255, 255, 255, 0.3);
+    transition: width 0.3s var(--ease), background 0.3s var(--ease);
+  }
+  .exp__dot.is-active { width: 28px; border-radius: 999px; background: var(--gold-500); }
+
+  @media (min-width: 860px) {
+    .exp__slide { grid-template-columns: 1.1fr 1fr; }
+    .exp__img { aspect-ratio: auto; height: 100%; min-height: 420px; }
+  }
+</style>
+
+<script>
+  const section = document.querySelector<HTMLElement>('.exp');
+  const track = document.querySelector<HTMLElement>('[data-exp-track]');
+  const slides = Array.from(document.querySelectorAll<HTMLElement>('[data-exp-slide]'));
+  const dots = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-exp-dot]'));
+  let index = 0;
+
+  const render = () => {
+    if (!track) return;
+    track.style.transform = `translateX(-${index * 100}%)`;
+    slides.forEach((s, i) => s.setAttribute('aria-hidden', String(i !== index)));
+    dots.forEach((d, i) => {
+      d.classList.toggle('is-active', i === index);
+      d.setAttribute('aria-selected', String(i === index));
+    });
+  };
+
+  const go = (next: number) => {
+    index = (next + slides.length) % slides.length;
+    render();
+  };
+
+  document.querySelector('[data-exp-next]')?.addEventListener('click', () => go(index + 1));
+  document.querySelector('[data-exp-prev]')?.addEventListener('click', () => go(index - 1));
+  dots.forEach((d, i) => d.addEventListener('click', () => go(i)));
+
+  // Attractions / Booking view toggle
+  document.querySelectorAll<HTMLButtonElement>('[data-exp-tab]').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll<HTMLButtonElement>('[data-exp-tab]').forEach((t) => {
+        const on = t === tab;
+        t.classList.toggle('is-active', on);
+        t.setAttribute('aria-selected', String(on));
+      });
+      section?.setAttribute('data-mode', tab.dataset.expTab!);
+    });
+  });
+
+  // Touch swipe
+  const viewport = document.querySelector<HTMLElement>('[data-exp-viewport]');
+  let startX = 0;
+  let dragging = false;
+  viewport?.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; dragging = true; }, { passive: true });
+  viewport?.addEventListener('touchend', (e) => {
+    if (!dragging) return;
+    dragging = false;
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 45) go(index + (dx < 0 ? 1 : -1));
+  });
+
+  // Keyboard
+  viewport?.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') go(index + 1);
+    if (e.key === 'ArrowLeft') go(index - 1);
+  });
+  viewport?.setAttribute('tabindex', '0');
+
+  render();
+</script>

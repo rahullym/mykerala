@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../data/site';
+import { packages } from '../data/packages';
+---
+
+<Base title={`Page not found | ${site.name}`} description="The page you were looking for isn't here.">
+  <section class="nf">
+    <img class="nf__bg" src="/images/allapey.jpg" alt="" />
+    <div class="nf__veil"></div>
+    <div class="wrap nf__inner">
+      <p class="kicker" style="color:var(--gold-400);">Error 404</p>
+      <h1>This route isn't <span class="nf__accent">on the map.</span></h1>
+      <p class="nf__lede">
+        The page you were looking for has moved or never existed. Let's get you back to Kerala.
+      </p>
+      <div class="stack" style="margin-top:2rem;">
+        <a href="/" class="btn btn--gold">Back to Home <span class="arrow" aria-hidden="true">→</span></a>
+        <a href="/packages" class="btn btn--light">Browse Packages</a>
+      </div>
+      <ul class="nf__links">
+        {packages.map((p) => <li><a href={`/packages/${p.slug}`}>{p.name}</a></li>)}
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    position: relative; isolation: isolate; color: var(--cream);
+    min-height: 100svh; display: grid; align-items: center;
+    padding-block: calc(var(--header-h) + 3rem) 4rem;
+  }
+  .nf__bg { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; }
+  .nf__veil { position: absolute; inset: 0; z-index: -1; background: rgba(6, 40, 29, 0.86); }
+  .nf h1 { margin-top: 0.9rem; }
+  .nf__accent { font-style: italic; color: var(--gold-400); }
+  .nf__lede { margin-top: 1.1rem; max-width: 46ch; color: rgba(250, 247, 240, 0.78); }
+  .nf__links {
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+    margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.16);
+  }
+  .nf__links a {
+    display: inline-block; font-size: 0.78rem; padding: 0.4rem 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 999px;
+    transition: background 0.25s var(--ease), color 0.25s var(--ease);
+  }
+  .nf__links a:hover { background: var(--gold-500); color: var(--green-900); border-color: var(--gold-500); }
+</style>

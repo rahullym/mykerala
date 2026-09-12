@@ -1,0 +1,173 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import PackageCard from '../../components/PackageCard.astro';
+import Contact from '../../components/Contact.astro';
+import { packages } from '../../data/packages';
+
+const themes = ['All', ...Array.from(new Set(packages.map((p) => p.theme)))];
+---
+
+<Base
+  title="Kerala Tour Packages | Make My Kerala"
+  description="Explore our Kerala tour packages covering Munnar, Thekkady, Alappuzha and other beautiful destinations."
+>
+  <PageHero
+    kicker="Explore Kerala"
+    title="Kerala Tour"
+    accent="Packages"
+    lede="Discover beautiful hill stations, wildlife, beaches and peaceful backwaters with our specially designed Kerala tours."
+    image="/images/allapey.jpg"
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Packages' }]}
+  />
+
+  <section class="section">
+    <div class="wrap">
+      <div class="toolbar" data-reveal>
+        <div class="toolbar__search">
+          <span aria-hidden="true">⌕</span>
+          <label for="pkg-search" class="sr-only">Search packages</label>
+          <input id="pkg-search" type="search" placeholder="Search by name or destination…" data-pkg-search />
+        </div>
+        <div class="toolbar__sort">
+          <label for="pkg-sort" class="sr-only">Sort packages</label>
+          <select id="pkg-sort" data-pkg-sort>
+            <option value="default">Sort: Featured</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="days-asc">Duration: Short to Long</option>
+            <option value="days-desc">Duration: Long to Short</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filters scroll-x" role="tablist" aria-label="Filter packages by theme" data-reveal>
+        {themes.map((t, i) => (
+          <button
+            type="button"
+            role="tab"
+            class:list={['filter', { 'is-active': i === 0 }]}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            data-pkg-filter={t}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+
+      <p class="result-count"><b data-pkg-count>{packages.length}</b> packages</p>
+
+      <div class="grid grid--3" data-pkg-grid>
+        {packages.map((p, i) => <PackageCard pkg={p} delay={i * 70} />)}
+      </div>
+
+      <p class="empty" data-pkg-empty hidden>
+        No packages match that search. <button type="button" class="link-arrow" data-pkg-clear>Clear filters</button>
+      </p>
+    </div>
+  </section>
+
+  <Contact />
+</Base>
+
+<style>
+  .toolbar {
+    display: flex; flex-wrap: wrap; gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+  .toolbar__search {
+    flex: 1 1 260px; display: flex; align-items: center; gap: 0.6rem;
+    padding: 0 1rem; background: var(--white);
+    border: 1px solid var(--line); border-radius: 999px;
+  }
+  .toolbar__search span { color: var(--ink-soft); font-size: 1.1rem; }
+  .toolbar__search input {
+    flex: 1; border: 0; background: none; padding: 0.85rem 0; min-height: 48px; outline: none;
+  }
+  .toolbar__sort select {
+    padding: 0.85rem 1.1rem; min-height: 48px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--white); font-size: 0.88rem;
+  }
+
+  .filters { display: flex; gap: 0.5rem; padding-bottom: 0.5rem; margin-bottom: 1.25rem; }
+  .filter {
+    flex: 0 0 auto; padding: 0.6rem 1.15rem; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--white);
+    font-size: 0.83rem; font-weight: 600; color: var(--ink-soft); min-height: 42px;
+    transition: background 0.25s var(--ease), color 0.25s var(--ease), border-color 0.25s var(--ease);
+  }
+  .filter:hover { border-color: var(--green-600); color: var(--green-700); }
+  .filter.is-active { background: var(--green-700); color: var(--cream); border-color: var(--green-700); }
+
+  .result-count { font-size: 0.84rem; color: var(--ink-soft); margin-bottom: 1.5rem; }
+  .empty { text-align: center; padding: 3rem 0; color: var(--ink-soft); }
+  :global(.pkg.is-hidden) { display: none; }
+</style>
+
+<script>
+  const grid = document.querySelector<HTMLElement>('[data-pkg-grid]');
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-pkg-grid] .pkg'));
+  const search = document.querySelector<HTMLInputElement>('[data-pkg-search]');
+  const sort = document.querySelector<HTMLSelectElement>('[data-pkg-sort]');
+  const filters = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-pkg-filter]'));
+  const count = document.querySelector<HTMLElement>('[data-pkg-count]');
+  const empty = document.querySelector<HTMLElement>('[data-pkg-empty]');
+  const order = cards.map((c) => c);
+
+  let theme = 'All';
+
+  const apply = () => {
+    const q = (search?.value ?? '').trim().toLowerCase();
+    let shown = 0;
+
+    cards.forEach((card) => {
+      const haystack = `${card.dataset.name} ${card.dataset.theme} ${card.textContent}`.toLowerCase();
+      const matchTheme = theme === 'All' || card.dataset.theme === theme;
+      const matchQuery = !q || haystack.includes(q);
+      const visible = matchTheme && matchQuery;
+      card.classList.toggle('is-hidden', !visible);
+      if (visible) shown++;
+    });
+
+    // Re-order the DOM to match the chosen sort.
+    const mode = sort?.value ?? 'default';
+    const sorted = [...order].sort((a, b) => {
+      const pa = Number(a.dataset.price), pb = Number(b.dataset.price);
+      const da = Number(a.dataset.days), db = Number(b.dataset.days);
+      switch (mode) {
+        case 'price-asc': return pa - pb;
+        case 'price-desc': return pb - pa;
+        case 'days-asc': return da - db;
+        case 'days-desc': return db - da;
+        default: return order.indexOf(a) - order.indexOf(b);
+      }
+    });
+    sorted.forEach((c) => grid?.appendChild(c));
+
+    if (count) count.textContent = String(shown);
+    if (empty) empty.hidden = shown > 0;
+  };
+
+  search?.addEventListener('input', apply);
+  sort?.addEventListener('change', apply);
+  filters.forEach((btn) =>
+    btn.addEventListener('click', () => {
+      theme = btn.dataset.pkgFilter!;
+      filters.forEach((b) => {
+        const on = b === btn;
+        b.classList.toggle('is-active', on);
+        b.setAttribute('aria-selected', String(on));
+      });
+      apply();
+    })
+  );
+  document.querySelector('[data-pkg-clear]')?.addEventListener('click', () => {
+    if (search) search.value = '';
+    theme = 'All';
+    filters.forEach((b, i) => {
+      b.classList.toggle('is-active', i === 0);
+      b.setAttribute('aria-selected', String(i === 0));
+    });
+    apply();
+  });
+</script>

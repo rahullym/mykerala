@@ -1,0 +1,53 @@
+---
+import type { Pkg } from '../data/packages';
+interface Props { pkg: Pkg; delay?: number; }
+const { pkg, delay = 0 } = Astro.props;
+---
+
+<article class="card pkg" data-reveal data-reveal-delay={delay} data-theme={pkg.theme} data-price={pkg.price} data-days={pkg.days} data-name={pkg.name.toLowerCase()}>
+  <a href={`/packages/${pkg.slug}`} class="pkg__media card__media" aria-label={`View ${pkg.name}`}>
+    <img src={pkg.image} alt={pkg.name} loading="lazy" width="600" height="450" />
+    <span class="tag tag--float">{pkg.nights}</span>
+    <span class="pkg__theme">{pkg.theme}</span>
+  </a>
+  <div class="card__body pkg__body">
+    <h3><a href={`/packages/${pkg.slug}`}>{pkg.name}</a></h3>
+    <p class="pkg__route">{pkg.route}</p>
+    <p class="pkg__desc muted">{pkg.description}</p>
+    <div class="pkg__foot">
+      <div>
+        <small class="muted">Starting from</small>
+        <p class="price-amount">₹{pkg.price.toLocaleString('en-IN')}</p>
+        <small class="muted">per person</small>
+      </div>
+      <a href={`/packages/${pkg.slug}`} class="btn btn--primary pkg__btn">
+        View Itinerary <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .pkg { display: flex; flex-direction: column; }
+  .pkg__media { display: block; }
+  .pkg__theme {
+    position: absolute; bottom: 0.9rem; left: 0.9rem;
+    font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600;
+    color: var(--cream); background: rgba(6, 40, 29, 0.72); backdrop-filter: blur(6px);
+    padding: 0.3rem 0.7rem; border-radius: 999px;
+  }
+  .pkg__body { display: flex; flex-direction: column; flex: 1; }
+  .pkg__route {
+    margin-top: 0.5rem; font-size: 0.78rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--gold-600); font-weight: 600;
+  }
+  .pkg__desc { margin-top: 0.75rem; font-size: 0.9rem; }
+  .pkg__foot {
+    margin-top: auto; padding-top: 1.4rem;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  }
+  .pkg__foot small { display: block; font-size: 0.72rem; }
+  .pkg__btn { padding: 0.75rem 1.15rem; font-size: 0.84rem; }
+  .pkg h3 a { transition: color 0.25s var(--ease); }
+  .pkg h3 a:hover { color: var(--green-600); }
+</style>

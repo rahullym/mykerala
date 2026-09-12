@@ -1,0 +1,38 @@
+---
+import { marqueePlaces } from '../data/site';
+const row = [...marqueePlaces, ...marqueePlaces];
+---
+
+<section class="marquee" aria-label="Destinations we cover">
+  <div class="marquee__track">
+    {row.map((place, i) => (
+      <span class="marquee__item" aria-hidden={i >= marqueePlaces.length ? 'true' : undefined}>
+        {place}<i aria-hidden="true">✦</i>
+      </span>
+    ))}
+  </div>
+</section>
+
+<style>
+  .marquee {
+    background: var(--green-900); color: var(--cream);
+    padding-block: clamp(0.9rem, 2vw, 1.4rem);
+    overflow: hidden; white-space: nowrap;
+  }
+  .marquee__track {
+    display: inline-flex; align-items: center; gap: clamp(1.5rem, 4vw, 3rem);
+    animation: scroll 32s linear infinite;
+    will-change: transform;
+  }
+  .marquee:hover .marquee__track { animation-play-state: paused; }
+  .marquee__item {
+    display: inline-flex; align-items: center; gap: clamp(1.5rem, 4vw, 3rem);
+    font-family: var(--serif); font-size: clamp(1.1rem, 3vw, 1.9rem); font-style: italic;
+  }
+  .marquee__item i { color: var(--gold-500); font-size: 0.5em; font-style: normal; }
+  @keyframes scroll { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee__track { animation: none; }
+    .marquee { overflow-x: auto; }
+  }
+</style>

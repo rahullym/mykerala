@@ -1,0 +1,301 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Contact from '../components/Contact.astro';
+import { site } from '../data/site';
+
+const services = [
+  { icon: '✦', title: 'Curated Holidays', body: 'Thoughtfully planned holidays combining sightseeing, relaxation, local experiences and value for money.' },
+  { icon: '◈', title: 'Personalized Journeys', body: 'Travel plans shaped around your interests, time, preferred experiences and style of travel.' },
+  { icon: '◇', title: 'South India Tours', body: "Discover Kerala, Tamil Nadu and some of South India's most loved destinations through carefully organized tours." },
+  { icon: '♢', title: 'Group & Corporate Travel', body: 'Seamless travel planning for groups and corporate guests with attention to comfort and coordination.' },
+  { icon: '❋', title: 'Family & Honeymoon Trips', body: 'From family vacations to romantic getaways, we help create journeys filled with memorable moments.' },
+  { icon: '✧', title: 'Customized Tours', body: 'Flexible South India holidays created to match your travel preferences and the experiences you want to discover.' },
+];
+
+const places = [
+  'Munnar', 'Thekkady', 'Alappuzha (Alleppey)', 'Trivandrum', 'Kanyakumari',
+  'Madurai', 'Kovalam', 'Poovar', 'Rameshwaram', 'Cochin (Kochi)',
+];
+
+const steps = [
+  { n: '01', title: 'Understand', body: 'We begin by understanding your travel needs and expectations.' },
+  { n: '02', title: 'Plan', body: 'Your itinerary is carefully structured around your journey.' },
+  { n: '03', title: 'Experience', body: 'Travel, explore, relax and create memories along the way.' },
+];
+
+const values = [
+  { n: '01', title: 'Personalized Service', body: 'Every traveler has a different idea of the perfect holiday. We keep that individuality at the heart of our planning.' },
+  { n: '02', title: 'Reliable Planning', body: 'We focus on thoughtful planning so your journey can be smooth, comfortable and enjoyable.' },
+  { n: '03', title: 'Genuine Hospitality', body: 'We value the warmth, culture and local character that make South India such a memorable place to explore.' },
+  { n: '04', title: 'Memorable Experiences', body: 'The goal is not simply to visit destinations, but to return home with experiences worth remembering.' },
+];
+---
+
+<Base
+  title={`About Us | ${site.name}`}
+  description={`${site.years} years of creating memorable journeys across Kerala and South India.`}
+>
+  <PageHero
+    kicker="About Make My Kerala"
+    title="Journeys crafted"
+    accent="with experience."
+    lede={`${site.years} years of creating memorable journeys across Kerala and South India.`}
+    image="/images/wayanad.jpg"
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'About Us' }]}
+  >
+    <div class="stack" style="margin-top:2rem;">
+      <a href="#story" class="btn btn--gold">Discover Our Story</a>
+      <a href="#contact" class="btn btn--light">Plan Your Journey</a>
+    </div>
+  </PageHero>
+
+  <section class="section" id="story">
+    <div class="wrap story">
+      <div>
+        <p class="kicker" data-reveal>Our Story</p>
+        <h2 data-reveal data-reveal-delay="80">More than a holiday, <span class="italic">it's a memory.</span></h2>
+        <p class="story__lead" data-reveal data-reveal-delay="140">
+          Welcome to <strong>MakeMyKerala</strong>, your trusted travel partner with
+          <strong>{site.years} years of experience</strong> in creating memorable journeys across South India.
+        </p>
+        <p class="muted" data-reveal data-reveal-delay="180">
+          With a strong presence in Kerala and Tamil Nadu, we specialize in curated holiday experiences that
+          bring together comfort, culture, nature and authentic local hospitality.
+        </p>
+        <p class="muted" data-reveal data-reveal-delay="220">
+          Over the years, we have proudly served thousands of travelers, families, groups and corporate
+          guests, helping them discover the beauty and diversity of South India.
+        </p>
+      </div>
+      <div class="badge" data-reveal data-reveal-delay="140">
+        <span class="badge__num">{site.years}</span>
+        <span class="badge__label">Years of<br />travel experience</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--sand">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker" data-reveal>What we do</p>
+        <h2 data-reveal data-reveal-delay="80">Travel designed <span class="italic">around you.</span></h2>
+        <p data-reveal data-reveal-delay="140">Every journey begins with understanding what makes your trip special.</p>
+      </div>
+      <div class="grid grid--3">
+        {services.map((s, i) => (
+          <article class="svc" data-reveal data-reveal-delay={i * 70}>
+            <div class="svc__top">
+              <span class="svc__n">{String(i + 1).padStart(2, '0')}</span>
+              <span class="svc__icon" aria-hidden="true">{s.icon}</span>
+            </div>
+            <h3>{s.title}</h3>
+            <p class="muted">{s.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker" data-reveal>Explore South India</p>
+        <h2 data-reveal data-reveal-delay="80">Places that <span class="italic">stay with you.</span></h2>
+        <p data-reveal data-reveal-delay="140">
+          Our travel expertise covers some of the region's most loved destinations, each offering its own
+          atmosphere, culture and experience.
+        </p>
+      </div>
+      <ol class="plist">
+        {places.map((p, i) => (
+          <li data-reveal data-reveal-delay={i * 45}>
+            <span class="plist__n">{String(i + 1).padStart(2, '0')}</span>
+            <span class="plist__name">{p}</span>
+            <span class="plist__arrow" aria-hidden="true">↗</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--dark">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker" data-reveal>Every journey is different</p>
+        <h2 data-reveal data-reveal-delay="80">From first <span class="italic gold">hello</span> to the final <span class="italic gold">memory.</span></h2>
+        <p data-reveal data-reveal-delay="140">
+          A good itinerary is more than a list of places. It should create the right rhythm between discovery
+          and relaxation.
+        </p>
+      </div>
+      <div class="grid grid--3">
+        {steps.map((s, i) => (
+          <div class="step" data-reveal data-reveal-delay={i * 90}>
+            <span class="step__n">{s.n}</span>
+            <h3>{s.title}</h3>
+            <p>{s.body}</p>
+          </div>
+        ))}
+      </div>
+      <blockquote class="quote" data-reveal>
+        <span aria-hidden="true">“</span>
+        Every journey should feel personal, purposeful and unforgettable.
+        <cite>The Make My Kerala approach</cite>
+      </blockquote>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap people">
+      <div>
+        <p class="kicker" data-reveal>The people behind the journey</p>
+        <h2 data-reveal data-reveal-delay="80">Built on <span class="italic">passion &amp; trust.</span></h2>
+        <p class="muted" data-reveal data-reveal-delay="140" style="margin-top:1.25rem;">
+          MakeMyKerala is jointly operated by <strong>{site.owners[0]}</strong> and
+          <strong>{site.owners[1]}</strong>. Their passion for travel and dedication to customer satisfaction
+          have been the foundation of the company's success for over two decades.
+        </p>
+      </div>
+      <div class="people__card" data-reveal data-reveal-delay="120">
+        <span class="people__mark" aria-hidden="true">✦</span>
+        <small>Make My Kerala</small>
+        <p class="people__names">{site.owners[0]}<em>&amp;</em>{site.owners[1]}</p>
+        <span class="people__years">{site.years} Years</span>
+        <small class="people__tag">Travel · Experience · Hospitality</small>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--sand">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker" data-reveal>What matters to us</p>
+        <h2 data-reveal data-reveal-delay="80">The values behind <span class="italic">every journey.</span></h2>
+      </div>
+      <div class="grid grid--2">
+        {values.map((v, i) => (
+          <article class="value" data-reveal data-reveal-delay={i * 80}>
+            <span class="value__n">{v.n}</span>
+            <div>
+              <h3>{v.title}</h3>
+              <p class="muted">{v.body}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section mission">
+    <div class="wrap center">
+      <p class="kicker" data-reveal style="justify-content:center;">Our mission</p>
+      <h2 data-reveal data-reveal-delay="80">Creating lifelong <span class="italic">travel memories.</span></h2>
+      <p class="muted mission__p" data-reveal data-reveal-delay="140">
+        To create lifelong travel memories through personalized service, reliable planning and genuine South
+        Indian hospitality.
+      </p>
+      <p class="mission__sig" data-reveal data-reveal-delay="180">
+        <span aria-hidden="true">✦</span> Travel with MakeMyKerala.<br />
+        Where every journey becomes a memory for life.
+      </p>
+      <div class="stack" style="justify-content:center;margin-top:2rem;" data-reveal>
+        <a href="/packages" class="btn btn--primary">Browse Packages <span class="arrow" aria-hidden="true">→</span></a>
+        <a href="#contact" class="btn btn--ghost">Begin Your Journey</a>
+      </div>
+    </div>
+  </section>
+
+  <Contact />
+</Base>
+
+<style>
+  .gold { color: var(--gold-400); }
+  .story { display: grid; gap: clamp(2rem, 5vw, 3.5rem); align-items: center; }
+  .story__lead { margin-top: 1.5rem; font-size: clamp(1rem, 2.2vw, 1.12rem); }
+  .story p + p { margin-top: 1rem; }
+  .badge {
+    display: grid; place-items: center; gap: 0.5rem; text-align: center;
+    aspect-ratio: 1; border-radius: 50%; padding: 2rem;
+    background: var(--green-900); color: var(--cream);
+    max-width: 300px; margin-inline: auto; box-shadow: var(--shadow);
+  }
+  .badge__num { font-family: var(--serif); font-size: clamp(3.5rem, 11vw, 5.5rem); line-height: 1; color: var(--gold-400); }
+  .badge__label { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; }
+
+  .svc {
+    background: var(--white); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: clamp(1.35rem, 3vw, 1.85rem);
+    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  }
+  .svc:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+  .svc__top { display: flex; align-items: center; justify-content: space-between; }
+  .svc__n { font-family: var(--serif); font-size: 1.6rem; color: var(--line); }
+  .svc__icon { color: var(--gold-500); font-size: 1.2rem; }
+  .svc h3 { margin-top: 1rem; font-size: 1.18rem; }
+  .svc p { margin-top: 0.6rem; font-size: 0.89rem; }
+
+  .plist { display: grid; gap: 0; border-top: 1px solid var(--line); }
+  .plist li {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1rem;
+    padding-block: clamp(0.9rem, 2vw, 1.15rem); border-bottom: 1px solid var(--line);
+    transition: padding-left 0.3s var(--ease), color 0.3s var(--ease);
+  }
+  .plist li:hover { padding-left: 0.75rem; color: var(--green-600); }
+  .plist__n { font-family: var(--serif); color: var(--gold-500); font-size: 0.95rem; }
+  .plist__name { font-family: var(--serif); font-size: clamp(1.15rem, 3vw, 1.7rem); }
+  .plist__arrow { opacity: 0.35; }
+  @media (min-width: 800px) { .plist { grid-template-columns: 1fr 1fr; column-gap: clamp(2rem, 5vw, 4rem); } }
+
+  .step { border-top: 2px solid var(--gold-500); padding-top: 1.25rem; }
+  .step__n { font-family: var(--serif); font-size: 2rem; color: var(--gold-400); }
+  .step h3 { margin-top: 0.5rem; }
+  .step p { margin-top: 0.5rem; color: rgba(250, 247, 240, 0.72); font-size: 0.92rem; }
+  .quote {
+    margin-top: clamp(2.5rem, 5vw, 4rem); text-align: center;
+    font-family: var(--serif); font-size: clamp(1.3rem, 4vw, 2.1rem); line-height: 1.35;
+    max-width: 22ch; margin-inline: auto;
+  }
+  .quote span { display: block; font-size: 3rem; color: var(--gold-500); line-height: 0.5; margin-bottom: 1rem; }
+  .quote cite {
+    display: block; margin-top: 1.5rem; font-family: var(--sans); font-style: normal;
+    font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-400);
+  }
+
+  .people { display: grid; gap: clamp(2rem, 5vw, 3.5rem); align-items: center; }
+  .people__card {
+    background: var(--green-900); color: var(--cream); text-align: center;
+    border-radius: var(--radius-lg); padding: clamp(2rem, 5vw, 3rem);
+    box-shadow: var(--shadow);
+  }
+  .people__mark { color: var(--gold-500); font-size: 1.3rem; }
+  .people__card > small {
+    display: block; margin-top: 0.75rem; font-size: 0.68rem;
+    letter-spacing: 0.24em; text-transform: uppercase; color: rgba(250,247,240,0.55);
+  }
+  .people__names { font-family: var(--serif); font-size: clamp(1.4rem, 4vw, 2rem); margin-top: 1rem; line-height: 1.25; }
+  .people__names em { display: block; font-size: 0.7em; color: var(--gold-400); font-style: italic; }
+  .people__years {
+    display: inline-block; margin-top: 1.5rem; padding: 0.4rem 1.1rem;
+    border: 1px solid rgba(255,255,255,0.25); border-radius: 999px;
+    font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .people__tag { display: block; margin-top: 0.85rem; font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-400); }
+  @media (min-width: 900px) { .people, .story { grid-template-columns: 1.1fr 0.9fr; } }
+
+  .value {
+    display: grid; grid-template-columns: auto 1fr; gap: 1.25rem; align-items: start;
+    background: var(--white); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: clamp(1.25rem, 3vw, 1.75rem);
+  }
+  .value__n { font-family: var(--serif); font-size: 1.8rem; color: var(--gold-500); line-height: 1; }
+  .value h3 { font-size: 1.15rem; }
+  .value p { margin-top: 0.5rem; font-size: 0.89rem; }
+
+  .mission__p { max-width: 52ch; margin: 1.25rem auto 0; }
+  .mission__sig {
+    margin-top: 2rem; font-family: var(--serif); font-style: italic;
+    font-size: clamp(1.1rem, 3vw, 1.5rem); color: var(--green-700); line-height: 1.5;
+  }
+  .mission__sig span { color: var(--gold-500); }
+</style>

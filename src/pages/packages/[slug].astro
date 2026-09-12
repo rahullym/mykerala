@@ -1,0 +1,383 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Contact from '../../components/Contact.astro';
+import { packages, packageHighlights } from '../../data/packages';
+import { site } from '../../data/site';
+
+export function getStaticPaths() {
+  return packages.map((pkg) => ({ params: { slug: pkg.slug }, props: { pkg } }));
+}
+
+const { pkg } = Astro.props;
+const waText = encodeURIComponent(
+  `Hi Make My Kerala! I'm interested in the ${pkg.name} (${pkg.nights}).`
+);
+---
+
+<Base title={`${pkg.name} | ${site.name}`} description={pkg.description}>
+  <PageHero
+    kicker="Kerala Tour Package"
+    title={pkg.name}
+    lede={pkg.kicker}
+    image={pkg.image}
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Packages', href: '/packages' }, { label: pkg.name }]}
+  >
+    <ul class="phero__facts">
+      <li><b>{pkg.nights}</b><small>Duration</small></li>
+      <li><b>{pkg.route}</b><small>Destinations</small></li>
+      <li><b>₹{pkg.price.toLocaleString('en-IN')}</b><small>Per Person</small></li>
+    </ul>
+  </PageHero>
+
+  <section class="section section--tight">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker" data-reveal>Explore Kerala</p>
+        <h2 data-reveal data-reveal-delay="80">{pkg.name}</h2>
+        <p data-reveal data-reveal-delay="140">{pkg.description}</p>
+      </div>
+
+      <ul class="hl">
+        {packageHighlights.map((h, i) => (
+          <li class="hl__item" data-reveal data-reveal-delay={i * 60}>
+            <span class="hl__icon" aria-hidden="true">{h.icon}</span>
+            <b>{h.title}</b>
+            <small>{h.body}</small>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--sand" id="itinerary">
+    <div class="wrap detail">
+      <div class="detail__main">
+        <div class="section-head">
+          <p class="kicker" data-reveal>Tour Itinerary</p>
+          <h2 data-reveal data-reveal-delay="80">{pkg.nights}</h2>
+          <p data-reveal data-reveal-delay="140">
+            A carefully planned journey through {pkg.places.join(', ')}.
+          </p>
+          {!pkg.sourceItinerary && (
+            <p class="note" data-reveal data-reveal-delay="160">
+              <span aria-hidden="true">ⓘ</span> Sample day plan — every itinerary is customised to your dates,
+              pace and interests.
+            </p>
+          )}
+        </div>
+
+        <div class="itin__tools" data-reveal>
+          <button type="button" class="link-arrow" data-itin-all>Expand all days</button>
+        </div>
+
+        <ol class="itin">
+          {pkg.itinerary.map((day, i) => (
+            <li class="itin__day" data-reveal data-reveal-delay={i * 60}>
+              <button
+                type="button"
+                class="itin__head"
+                aria-expanded={i === 0 ? 'true' : 'false'}
+                aria-controls={`day-${i}`}
+                data-itin-btn
+              >
+                <span class="itin__num">
+                  <small>Day</small><b>{String(i + 1).padStart(2, '0')}</b>
+                </span>
+                <span class="itin__title">
+                  <strong>{day.title}</strong>
+                  <small>{day.summary}</small>
+                </span>
+                <span class="itin__chev" aria-hidden="true">▾</span>
+              </button>
+              <div class="itin__body" id={`day-${i}`} hidden={i !== 0}>
+                <ul>
+                  {day.items.map((item) => (
+                    <li><span aria-hidden="true">✓</span> {item}</li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          ))}
+        </ol>
+
+        <div class="opts" id="options">
+          <p class="kicker" data-reveal>Package Options</p>
+          <h2 class="opts__h" data-reveal data-reveal-delay="80">Choose your <span class="italic">stay experience</span></h2>
+          <div class="grid grid--2 opts__grid">
+            {pkg.options.map((opt, i) => (
+              <article
+                class:list={['opt', { 'is-selected': i === 0 }]}
+                data-opt
+                data-opt-name={opt.name}
+                data-reveal
+                data-reveal-delay={i * 90}
+              >
+                <div class="opt__top">
+                  <span class="tag">{opt.tag}</span>
+                  <span class="opt__label">{opt.label}</span>
+                </div>
+                <h3>{opt.name}</h3>
+                <ul class="opt__nights">
+                  {opt.nights.map((n) => <li><span aria-hidden="true">🌿</span> {n}</li>)}
+                </ul>
+                <p class="muted opt__note">{opt.note}</p>
+                <button type="button" class="btn btn--ghost btn--block opt__pick" data-opt-pick>
+                  <span class="opt__picklabel">Select this package</span>
+                </button>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <div class="incl" id="inclusions">
+          <p class="kicker" data-reveal>Package Details</p>
+          <h2 class="opts__h" data-reveal data-reveal-delay="80">Packages <span class="italic">include</span></h2>
+          <div class="grid grid--2">
+            {pkg.inclusions.map((group, i) => (
+              <div class="incl__card" data-reveal data-reveal-delay={i * 70}>
+                <span class="incl__icon" aria-hidden="true">{group.icon}</span>
+                <h3>{group.title}</h3>
+                <ul>
+                  {group.items.map((item) => <li>{item}</li>)}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <aside class="detail__rail">
+        <div class="book" data-reveal>
+          <small class="muted">Starting From</small>
+          <p class="price-amount book__price">₹{pkg.price.toLocaleString('en-IN')}</p>
+          <small class="muted">per person</small>
+
+          <dl class="book__meta">
+            <div><dt>Duration</dt><dd>{pkg.nights}</dd></div>
+            <div><dt>Route</dt><dd>{pkg.route}</dd></div>
+            <div><dt>Theme</dt><dd>{pkg.theme}</dd></div>
+            <div><dt>Selected</dt><dd data-opt-out>{pkg.options[0]?.name}</dd></div>
+          </dl>
+
+          <a href="#contact" class="btn btn--primary btn--block">
+            Enquire Now <span class="arrow" aria-hidden="true">→</span>
+          </a>
+          <a
+            href={`https://wa.me/${site.phoneHref.replace('+', '')}?text=${waText}`}
+            class="btn btn--ghost btn--block book__wa"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Ask on WhatsApp
+          </a>
+          <a href={`tel:${site.phoneHref}`} class="book__call">☎ {site.phone}</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Mobile sticky booking bar -->
+  <div class="mbar" data-mbar>
+    <div>
+      <small>Starting from</small>
+      <b>₹{pkg.price.toLocaleString('en-IN')}</b>
+    </div>
+    <a href="#contact" class="btn btn--gold">Enquire Now</a>
+  </div>
+
+  <Contact preselect={pkg.name} />
+</Base>
+
+<style>
+  .phero__facts {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem; margin-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.18); padding-top: 1.5rem;
+  }
+  .phero__facts b { display: block; font-family: var(--serif); font-size: clamp(1rem, 2.4vw, 1.3rem); }
+  .phero__facts small {
+    display: block; margin-top: 0.25rem; font-size: 0.68rem;
+    letter-spacing: 0.14em; text-transform: uppercase; color: rgba(250, 247, 240, 0.6);
+  }
+
+  .note {
+    margin-top: 1rem; font-size: 0.84rem; color: var(--green-700);
+    background: var(--green-100); padding: 0.7rem 1rem; border-radius: var(--radius-sm);
+  }
+
+  .hl { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 175px), 1fr)); }
+  .hl__item {
+    background: var(--white); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 1.25rem; text-align: center;
+  }
+  .hl__icon { font-size: 1.5rem; }
+  .hl__item b { display: block; margin-top: 0.6rem; font-size: 0.92rem; }
+  .hl__item small { display: block; margin-top: 0.3rem; font-size: 0.78rem; color: var(--ink-soft); }
+
+  .detail { display: grid; gap: clamp(2rem, 4vw, 3rem); align-items: start; }
+
+  .itin__tools { display: flex; justify-content: flex-end; margin-bottom: 1rem; }
+  .itin { display: grid; gap: 0.85rem; }
+  .itin__day {
+    background: var(--white); border: 1px solid var(--line);
+    border-radius: var(--radius); overflow: hidden;
+    transition: box-shadow 0.3s var(--ease);
+  }
+  .itin__day:has(.itin__head[aria-expanded='true']) { box-shadow: var(--shadow); }
+  .itin__head {
+    width: 100%; display: grid; grid-template-columns: auto 1fr auto;
+    gap: 1rem; align-items: center; text-align: left;
+    padding: clamp(1rem, 2.5vw, 1.35rem);
+  }
+  .itin__num {
+    display: grid; place-items: center; width: 54px; height: 54px; border-radius: 14px;
+    background: var(--green-900); color: var(--cream); flex: 0 0 auto;
+  }
+  .itin__num small { font-size: 0.55rem; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.7; }
+  .itin__num b { font-family: var(--serif); font-size: 1.2rem; line-height: 1; }
+  .itin__title strong { display: block; font-family: var(--serif); font-size: clamp(1rem, 2.4vw, 1.25rem); }
+  .itin__title small { display: block; margin-top: 0.3rem; font-size: 0.84rem; color: var(--ink-soft); }
+  .itin__chev { color: var(--green-700); transition: transform 0.3s var(--ease); }
+  .itin__head[aria-expanded='true'] .itin__chev { transform: rotate(180deg); }
+  .itin__body { padding: 0 clamp(1rem, 2.5vw, 1.35rem) 1.35rem; }
+  .itin__body ul { display: grid; gap: 0.55rem; padding-left: 0; }
+  .itin__body li {
+    display: flex; gap: 0.6rem; font-size: 0.9rem; color: var(--ink-soft);
+    padding-left: calc(54px + 1rem);
+  }
+  .itin__body li span { color: var(--green-600); font-weight: 700; }
+  .itin__body:not([hidden]) { animation: fade 0.35s var(--ease); }
+  @keyframes fade { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+  @media (max-width: 640px) { .itin__body li { padding-left: 0; } }
+
+  .opts, .incl { margin-top: clamp(2.5rem, 6vw, 4rem); }
+  .opts__h { margin-top: 0.8rem; margin-bottom: 1.5rem; font-size: clamp(1.5rem, 4vw, 2.2rem); }
+  .opt {
+    background: var(--white); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: clamp(1.25rem, 3vw, 1.75rem); display: flex; flex-direction: column;
+    transition: border-color 0.3s var(--ease), box-shadow 0.3s var(--ease), transform 0.3s var(--ease);
+  }
+  .opt.is-selected { border-color: var(--green-600); box-shadow: var(--shadow); }
+  .opt__top { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+  .opt__label { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-600); font-weight: 700; }
+  .opt h3 { margin-top: 0.85rem; }
+  .opt__nights { display: grid; gap: 0.5rem; margin-top: 1rem; }
+  .opt__nights li { display: flex; gap: 0.5rem; font-size: 0.89rem; }
+  .opt__note { font-size: 0.86rem; margin-top: 1rem; flex: 1; }
+  .opt__pick { margin-top: 1.25rem; }
+  .opt.is-selected .opt__pick { background: var(--green-700); color: var(--cream); border-color: var(--green-700); }
+
+  .incl__card {
+    background: var(--white); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: clamp(1.25rem, 3vw, 1.6rem);
+  }
+  .incl__icon { font-size: 1.4rem; }
+  .incl__card h3 { margin-top: 0.5rem; font-size: 1.12rem; }
+  .incl__card ul { display: grid; gap: 0.45rem; margin-top: 0.85rem; }
+  .incl__card li {
+    font-size: 0.87rem; color: var(--ink-soft);
+    padding-left: 1rem; position: relative;
+  }
+  .incl__card li::before { content: '·'; position: absolute; left: 0.25rem; color: var(--gold-500); font-weight: 700; }
+
+  .book {
+    background: var(--green-900); color: var(--cream);
+    border-radius: var(--radius-lg); padding: clamp(1.35rem, 3vw, 1.85rem);
+    box-shadow: var(--shadow);
+  }
+  .book small.muted { color: rgba(250, 247, 240, 0.6); }
+  .book__price { color: var(--gold-400); margin-block: 0.15rem; }
+  .book__meta { display: grid; gap: 0.7rem; margin-block: 1.4rem; padding-block: 1.4rem; border-block: 1px solid rgba(255,255,255,0.14); }
+  .book__meta > div { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.85rem; }
+  .book__meta dt { color: rgba(250, 247, 240, 0.6); }
+  .book__meta dd { text-align: right; font-weight: 600; }
+  .book .btn--primary { background: var(--gold-500); color: var(--green-900); }
+  .book .btn--primary:hover { background: var(--gold-400); }
+  .book__wa {
+    margin-top: 0.6rem; background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.25); color: var(--cream);
+  }
+  .book__wa:hover { background: rgba(255,255,255,0.16); }
+  .book__call { display: block; text-align: center; margin-top: 1rem; font-size: 0.88rem; color: var(--gold-400); }
+
+  .mbar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 80;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+    background: rgba(250, 247, 240, 0.96); backdrop-filter: blur(14px);
+    border-top: 1px solid var(--line); box-shadow: 0 -6px 24px rgba(6, 40, 29, 0.1);
+    transform: translateY(110%); transition: transform 0.35s var(--ease);
+  }
+  .mbar.is-visible { transform: none; }
+  .mbar small { display: block; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+  .mbar b { font-family: var(--serif); font-size: 1.3rem; color: var(--green-700); }
+  .mbar .btn { padding: 0.75rem 1.35rem; }
+
+  @media (min-width: 980px) {
+    .detail { grid-template-columns: 1fr 340px; }
+    .detail__rail { position: sticky; top: calc(var(--header-h) + 1.5rem); }
+    .mbar { display: none; }
+  }
+  @media (max-width: 979px) { :global(.fab) { bottom: calc(84px + env(safe-area-inset-bottom)); } }
+</style>
+
+<script>
+  // Itinerary accordion — days open independently, plus expand/collapse all.
+  const dayBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-itin-btn]'));
+  const panelOf = (btn: HTMLButtonElement) =>
+    document.getElementById(btn.getAttribute('aria-controls')!);
+
+  dayBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      const panel = panelOf(btn);
+      if (panel) panel.hidden = open;
+      syncAllLabel();
+    });
+  });
+
+  const allBtn = document.querySelector<HTMLButtonElement>('[data-itin-all]');
+  const allOpen = () => dayBtns.every((b) => b.getAttribute('aria-expanded') === 'true');
+  const syncAllLabel = () => {
+    if (allBtn) allBtn.textContent = allOpen() ? 'Collapse all days' : 'Expand all days';
+  };
+  allBtn?.addEventListener('click', () => {
+    const expand = !allOpen();
+    dayBtns.forEach((b) => {
+      b.setAttribute('aria-expanded', String(expand));
+      const panel = panelOf(b);
+      if (panel) panel.hidden = !expand;
+    });
+    syncAllLabel();
+  });
+  syncAllLabel();
+
+  // Stay-option selector, reflected in the booking rail.
+  const opts = Array.from(document.querySelectorAll<HTMLElement>('[data-opt]'));
+  const optOut = document.querySelector<HTMLElement>('[data-opt-out]');
+  const syncOpts = () => {
+    opts.forEach((o) => {
+      const on = o.classList.contains('is-selected');
+      const label = o.querySelector<HTMLElement>('.opt__picklabel');
+      if (label) label.textContent = on ? '✓ Selected' : 'Select this package';
+    });
+  };
+  opts.forEach((opt) => {
+    opt.querySelector('[data-opt-pick]')?.addEventListener('click', () => {
+      opts.forEach((o) => o.classList.toggle('is-selected', o === opt));
+      if (optOut) optOut.textContent = opt.dataset.optName ?? '';
+      syncOpts();
+    });
+  });
+  syncOpts();
+
+  // Mobile booking bar appears once the hero scrolls away.
+  const mbar = document.querySelector<HTMLElement>('[data-mbar]');
+  window.addEventListener(
+    'scroll',
+    () => mbar?.classList.toggle('is-visible', window.scrollY > 520),
+    { passive: true }
+  );
+</script>

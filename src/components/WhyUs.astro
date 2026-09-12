@@ -1,0 +1,55 @@
+---
+import { whyUs } from '../data/site';
+---
+
+<section class="section why">
+  <div class="wrap">
+    <div class="why__head">
+      <p class="kicker" data-reveal>Why Make My Kerala</p>
+      <h2 data-reveal data-reveal-delay="80">Why <span class="italic">choose us?</span></h2>
+      <p class="why__lede muted" data-reveal data-reveal-delay="140">
+        <span class="why__mark" aria-hidden="true">✦</span>
+        We take care of the details so you can focus on enjoying the beauty, culture and experiences of Kerala.
+      </p>
+    </div>
+
+    <ol class="why__list">
+      {whyUs.map((w, i) => (
+        <li class="why__item" data-reveal data-reveal-delay={i * 90}>
+          <span class="why__num">{String(i + 1).padStart(2, '0')}</span>
+          <div>
+            <h3>{w.title}</h3>
+            <p class="muted">{w.body}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .why__head { max-width: 640px; margin-bottom: clamp(2rem, 4vw, 3rem); }
+  .why__head h2 { margin-top: 0.85rem; }
+  .why__lede { margin-top: 1.1rem; }
+  .why__mark { color: var(--gold-500); margin-right: 0.35rem; }
+
+  .why__list { display: grid; gap: 0; border-top: 1px solid var(--line); }
+  .why__item {
+    display: grid; grid-template-columns: auto 1fr; gap: clamp(1rem, 3vw, 2.5rem);
+    align-items: start; padding-block: clamp(1.5rem, 3.5vw, 2.25rem);
+    border-bottom: 1px solid var(--line);
+    transition: padding-left 0.35s var(--ease), background 0.35s var(--ease);
+  }
+  .why__item:hover { padding-left: 0.75rem; background: rgba(255, 255, 255, 0.5); }
+  .why__num {
+    font-family: var(--serif); font-size: clamp(1.6rem, 4vw, 2.6rem);
+    color: var(--gold-500); line-height: 1; min-width: 2.5ch;
+  }
+  .why__item h3 { font-size: clamp(1.15rem, 3vw, 1.65rem); }
+  .why__item p { margin-top: 0.5rem; font-size: 0.92rem; max-width: 60ch; }
+
+  @media (min-width: 900px) {
+    .why__list { grid-template-columns: 1fr 1fr; column-gap: clamp(2rem, 5vw, 4rem); }
+    .why__item:nth-child(-n + 2) { border-top: 0; }
+  }
+</style>

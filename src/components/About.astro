@@ -1,0 +1,81 @@
+---
+import { site } from '../data/site';
+const places = ['Munnar','Thekkady','Alappuzha','Trivandrum','Kanyakumari','Madurai','Kovalam','Poovar','Rameshwaram','Cochin'];
+---
+
+<section class="section about" id="about">
+  <div class="wrap about__grid">
+    <div class="about__copy">
+      <p class="kicker" data-reveal>About Us</p>
+      <h2 data-reveal data-reveal-delay="80">Welcome to <span class="italic">MakeMyKerala</span></h2>
+      <p class="about__lead" data-reveal data-reveal-delay="140">
+        With <strong>{site.years} years of travel experience</strong>, Make My Kerala creates memorable and
+        personalized journeys across <strong>South India</strong>. We specialize in comfortable, authentic
+        holidays across Kerala and Tamil Nadu.
+      </p>
+      <p class="muted" data-reveal data-reveal-delay="180">
+        Trusted by thousands of travelers, families, groups and corporate guests, we create seamless tours
+        combining nature, culture, relaxation and local experiences.
+      </p>
+
+      <ul class="about__places" data-reveal data-reveal-delay="220">
+        {places.map((p) => <li>{p}</li>)}
+      </ul>
+
+      <p class="muted" data-reveal data-reveal-delay="260">
+        From <strong>honeymoon and family holidays</strong> to pilgrimage, group and customized tours,
+        every itinerary is planned for comfort, value and unforgettable memories.
+      </p>
+
+      <div class="about__cta stack" data-reveal data-reveal-delay="300">
+        <a href="/about-us" class="btn btn--primary">Our Story <span class="arrow" aria-hidden="true">→</span></a>
+        <a href="#contact" class="btn btn--ghost">Begin Your Journey</a>
+      </div>
+    </div>
+
+    <aside class="about__card" data-reveal data-reveal-delay="160">
+      <img src="/images/25yearslogo.png" alt={`${site.years} years of travel experience`} width="120" height="120" loading="lazy" />
+      <p class="about__owners">{site.owners[0]} &amp; {site.owners[1]}</p>
+      <p class="about__owners-note">
+        Jointly operated by {site.owners[0]} and {site.owners[1]}, whose passion for travel and customer
+        satisfaction has shaped MakeMyKerala for over two decades.
+      </p>
+      <p class="about__motto">{site.years} Years. Personalized Service.<br />Genuine South Indian Hospitality.</p>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .about__grid { display: grid; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+  .about__lead { margin-top: 1.5rem; font-size: clamp(1rem, 2.2vw, 1.12rem); }
+  .about__copy p + p { margin-top: 1rem; }
+  .about__places {
+    display: flex; flex-wrap: wrap; gap: 0.45rem;
+    margin-block: 1.5rem;
+  }
+  .about__places li {
+    font-size: 0.76rem; padding: 0.4rem 0.85rem; border-radius: 999px;
+    background: var(--white); border: 1px solid var(--line); color: var(--green-700); font-weight: 500;
+  }
+  .about__cta { margin-top: 2rem; }
+
+  .about__card {
+    background: var(--green-900); color: var(--cream);
+    border-radius: var(--radius-lg); padding: clamp(1.75rem, 4vw, 2.5rem);
+    text-align: center; box-shadow: var(--shadow);
+    position: relative; overflow: hidden;
+  }
+  .about__card::after {
+    content: ''; position: absolute; inset: auto -30% -40% -30%; height: 200px;
+    background: radial-gradient(ellipse at center, rgba(201, 162, 39, 0.25), transparent 70%);
+  }
+  .about__card img { width: 110px; height: 110px; object-fit: contain; margin-inline: auto; }
+  .about__owners { font-family: var(--serif); font-size: clamp(1.3rem, 3vw, 1.65rem); margin-top: 1.25rem; }
+  .about__owners-note { font-size: 0.88rem; color: rgba(250, 247, 240, 0.72); margin-top: 0.85rem; line-height: 1.7; }
+  .about__motto {
+    margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid rgba(255, 255, 255, 0.16);
+    font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-400);
+    position: relative; z-index: 1;
+  }
+  @media (min-width: 960px) { .about__grid { grid-template-columns: 1.5fr 1fr; } }
+</style>

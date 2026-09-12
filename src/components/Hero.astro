@@ -1,0 +1,127 @@
+---
+import { stats } from '../data/site';
+---
+
+<section class="hero">
+  <video
+    class="hero__video"
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="none"
+    poster="/images/munnar.jpg"
+    data-hero-video
+    data-src="/video/keralavideo.mp4"
+    aria-hidden="true"
+  ></video>
+  <div class="hero__veil"></div>
+
+  <div class="wrap hero__inner">
+    <p class="hero__kicker" data-reveal>Discover Kerala</p>
+    <h1 data-reveal data-reveal-delay="100">
+      Kerala,<br /><span class="hero__accent">Beyond Ordinary.</span>
+    </h1>
+    <p class="hero__lede" data-reveal data-reveal-delay="200">
+      Curated journeys through misty hills, serene backwaters and sun-kissed shores.
+    </p>
+    <div class="hero__cta stack" data-reveal data-reveal-delay="300">
+      <a href="#packages" class="btn btn--gold">Explore Kerala <span class="arrow" aria-hidden="true">→</span></a>
+      <a href="#contact" class="btn btn--light">Plan Your Journey</a>
+    </div>
+  </div>
+
+  <div class="wrap hero__stats" data-reveal data-reveal-delay="400">
+    {stats.map((s) => (
+      <div class="stat">
+        <p class="stat__value">
+          <span data-count={s.value} data-decimals={(s as any).decimals ?? 0}>0</span>{s.suffix}
+        </p>
+        <p class="stat__label">{s.label}</p>
+      </div>
+    ))}
+  </div>
+
+  <a href="#about" class="hero__scroll" aria-label="Scroll to content">
+    <span class="hero__scrollline"></span>
+  </a>
+</section>
+
+<script>
+  // The hero clip is ~10 MB, so load it only on wider screens and when the
+  // visitor isn't on a metered/save-data connection. Everyone else gets the poster.
+  const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
+  const conn = (navigator as any).connection;
+  const saveData = Boolean(conn?.saveData);
+  const slow = /2g/.test(conn?.effectiveType ?? '');
+  const wideEnough = window.matchMedia('(min-width: 768px)').matches;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (video && wideEnough && !saveData && !slow && !reduced) {
+    const source = document.createElement('source');
+    source.src = video.dataset.src!;
+    source.type = 'video/mp4';
+    video.appendChild(source);
+    video.load();
+    video.play().catch(() => { /* autoplay blocked — poster stays */ });
+  }
+</script>
+
+<style>
+  .hero {
+    position: relative; isolation: isolate;
+    min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end;
+    padding-top: calc(var(--header-h) + 2rem);
+    padding-bottom: clamp(2rem, 5vw, 3.5rem);
+    color: var(--cream); overflow: hidden;
+  }
+  .hero__video {
+    position: absolute; inset: 0; z-index: -2;
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .hero__veil {
+    position: absolute; inset: 0; z-index: -1;
+    background:
+      linear-gradient(180deg, rgba(6, 40, 29, 0.62) 0%, rgba(6, 40, 29, 0.32) 38%, rgba(6, 40, 29, 0.88) 100%);
+  }
+
+  .hero__inner { margin-top: auto; padding-bottom: clamp(2rem, 5vw, 3rem); }
+  .hero__kicker {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--gold-400); margin-bottom: 1.1rem;
+  }
+  .hero h1 { color: var(--cream); text-shadow: 0 2px 30px rgba(0, 0, 0, 0.3); }
+  .hero__accent { font-style: italic; color: var(--gold-400); }
+  .hero__lede {
+    margin-top: 1.25rem; max-width: 33ch;
+    font-size: clamp(1rem, 2.4vw, 1.2rem); color: rgba(250, 247, 240, 0.88);
+  }
+  .hero__cta { margin-top: 2rem; }
+
+  .hero__stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: clamp(0.5rem, 3vw, 2rem);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: clamp(1.25rem, 3vw, 2rem);
+  }
+  .stat__value {
+    font-family: var(--serif); font-size: clamp(1.5rem, 5.5vw, 2.75rem);
+    font-weight: 600; line-height: 1; color: var(--cream);
+  }
+  .stat__label {
+    margin-top: 0.4rem; font-size: clamp(0.66rem, 1.9vw, 0.8rem);
+    letter-spacing: 0.1em; text-transform: uppercase; color: rgba(250, 247, 240, 0.66);
+  }
+
+  .hero__scroll {
+    position: absolute; right: clamp(1rem, 4vw, 3rem); bottom: 45%;
+    display: none; writing-mode: vertical-rl;
+  }
+  .hero__scrollline {
+    display: block; width: 1px; height: 70px;
+    background: linear-gradient(to bottom, transparent, var(--gold-400));
+    animation: pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+  @media (min-width: 900px) { .hero__scroll { display: block; } }
+</style>

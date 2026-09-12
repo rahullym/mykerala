@@ -1,0 +1,179 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import FloatingActions from '../components/FloatingActions.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = `${site.name} | ${site.tagline}`,
+  description = site.description,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#06281d" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="/images/25yearslogo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap"
+    />
+  </head>
+  <body>
+    <a href="#main" class="skip">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <FloatingActions />
+
+    <style>
+      .skip {
+        position: absolute; top: -60px; left: 1rem; z-index: 200;
+        background: var(--green-900); color: var(--cream);
+        padding: 0.75rem 1.25rem; border-radius: 0 0 10px 10px;
+        transition: top 0.25s var(--ease);
+      }
+      .skip:focus { top: 0; }
+      main { padding-top: 0; }
+    </style>
+
+    <script>
+      // ---------- Mobile navigation ----------
+      const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+      const panel = document.querySelector<HTMLElement>('[data-nav-panel]');
+      const scrim = document.querySelector<HTMLElement>('[data-nav-scrim]');
+      const closeBtn = document.querySelector<HTMLButtonElement>('[data-nav-close]');
+
+      const setNav = (open: boolean) => {
+        if (!panel || !scrim || !toggle) return;
+        panel.classList.toggle('is-open', open);
+        panel.setAttribute('aria-hidden', String(!open));
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+        document.body.classList.toggle('nav-open', open);
+        if (open) {
+          scrim.hidden = false;
+          requestAnimationFrame(() => scrim.classList.add('is-open'));
+          panel.querySelector<HTMLAnchorElement>('a')?.focus();
+        } else {
+          scrim.classList.remove('is-open');
+          setTimeout(() => { scrim.hidden = true; }, 350);
+        }
+      };
+
+      toggle?.addEventListener('click', () =>
+        setNav(!panel?.classList.contains('is-open'))
+      );
+      closeBtn?.addEventListener('click', () => setNav(false));
+      scrim?.addEventListener('click', () => setNav(false));
+      document.querySelectorAll('[data-nav-link]').forEach((a) =>
+        a.addEventListener('click', () => setNav(false))
+      );
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && panel?.classList.contains('is-open')) {
+          setNav(false);
+          toggle?.focus();
+        }
+        // Keep focus inside the open drawer.
+        if (e.key === 'Tab' && panel?.classList.contains('is-open')) {
+          const focusables = panel.querySelectorAll<HTMLElement>('a[href], button');
+          if (!focusables.length) return;
+          const first = focusables[0];
+          const last = focusables[focusables.length - 1];
+          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+      });
+
+      // ---------- Sticky / auto-hiding header ----------
+      const header = document.querySelector<HTMLElement>('[data-header]');
+      let lastY = window.scrollY;
+      const onScroll = () => {
+        const y = window.scrollY;
+        header?.classList.toggle('is-stuck', y > 40);
+        const hideable = y > 400 && y > lastY && !document.body.classList.contains('nav-open');
+        header?.classList.toggle('is-hidden', hideable);
+        lastY = y;
+        document.documentElement.style.setProperty('--scroll-y', String(y));
+      };
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      // ---------- Scroll reveal ----------
+      const revealables = document.querySelectorAll('[data-reveal]');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                const el = entry.target as HTMLElement;
+                const delay = Number(el.dataset.revealDelay ?? 0);
+                setTimeout(() => el.classList.add('is-visible'), delay);
+                io.unobserve(el);
+              }
+            });
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -60px 0px' }
+        );
+        revealables.forEach((el) => io.observe(el));
+      } else {
+        revealables.forEach((el) => el.classList.add('is-visible'));
+      }
+
+      // ---------- Animated counters ----------
+      const counters = document.querySelectorAll<HTMLElement>('[data-count]');
+      if (counters.length && 'IntersectionObserver' in window) {
+        const co = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              const el = entry.target as HTMLElement;
+              const target = Number(el.dataset.count);
+              const decimals = Number(el.dataset.decimals ?? 0);
+              const duration = 1400;
+              const start = performance.now();
+              const tick = (now: number) => {
+                const p = Math.min((now - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - p, 3);
+                el.textContent = (target * eased).toFixed(decimals);
+                if (p < 1) requestAnimationFrame(tick);
+              };
+              requestAnimationFrame(tick);
+              co.unobserve(el);
+            });
+          },
+          { threshold: 0.5 }
+        );
+        counters.forEach((el) => co.observe(el));
+      }
+
+      // ---------- Back to top ----------
+      const topBtn = document.querySelector<HTMLElement>('[data-to-top]');
+      window.addEventListener(
+        'scroll',
+        () => topBtn?.classList.toggle('is-visible', window.scrollY > 700),
+        { passive: true }
+      );
+      topBtn?.addEventListener('click', () =>
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      );
+    </script>
+  </body>
+</html>
